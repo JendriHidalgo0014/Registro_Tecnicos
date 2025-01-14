@@ -1,10 +1,18 @@
 using Registro_Tecnicos.Components;
+using Registro_Tecnicos.DAL;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+//Obtenemos el constructor para usarlo en el contexto.
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+
+//Agregamos el contexto al builder con el ConStr.
+builder.Services.AddDbContextFactory<Context>(o => o.UseSqlServer("ConStr"));
 
 var app = builder.Build();
 
