@@ -1,5 +1,6 @@
 using Registro_Tecnicos.Components;
 using Registro_Tecnicos.DAL;
+using Registro_Tecnicos.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,10 +10,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 //Obtenemos el constructor para usarlo en el contexto.
-var ConStr = builder.Configuration.GetConnectionString("ConStr");
+var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 
 //Agregamos el contexto al builder con el ConStr.
-builder.Services.AddDbContextFactory<Context>(o => o.UseSqlServer("ConStr"));
+builder.Services.AddDbContextFactory<Context>(Options => Options.UseSqlServer(ConStr));
 
 var app = builder.Build();
 
