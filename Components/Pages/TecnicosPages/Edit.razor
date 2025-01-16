@@ -1,0 +1,87 @@
+﻿@page "/Tecnicos/Edit/{TecnicoId:int}"
+@inject ToastService Toast
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Modificar</PageTitle>
+
+<EditForm Model="tecnicos" OnValidSubmit="Modificar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-container">
+        <div class="form-card">
+            <header class="form-header">
+                <h1>Modificar Técnico</h1>
+            </header>
+
+            <section class="form-body">
+                <div class="form-group">
+                    <label><strong>ID Técnico</strong></label>
+                    <InputNumber class="form-input" @bind-Value="tecnicos.TecnicoId" READONLY></InputNumber>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombres"><strong>Nombre</strong></label>
+                    <InputText id="nombres" class="form-input" @bind-Value="tecnicos.Nombres"></InputText>
+                    <ValidationMessage For="@(() => tecnicos.Nombres)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="sueldo"><strong>Sueldo por Hora</strong></label>
+                    <InputNumber id="sueldo" class="form-input" @bind-Value="tecnicos.SueldoHora"></InputNumber>
+                    <ValidationMessage For="@(() => tecnicos.SueldoHora)" />
+                </div>
+            </section>
+
+            <footer class="form-footer">
+                <a href="/Tecnico/Index" class="button cancel-button">
+                    <span class="bi bi-arrow-bar-left"></span> Volver
+                </a>
+                <button type="submit" class="button save-button">
+                    <span class="bi bi-check-circle-fill"></span> Guardar
+                </button>
+            </footer>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TecnicoId { get; set; }
+    public Tecnicos tecnicos { get; set; } = new Tecnicos();
+    public bool NombreRepetido { get; set; }
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        if (TecnicoId > 0)
+        {
+            tecnicos = await tecnicosService.Buscar(TecnicoId);
+        }
+    }
+
+    public async Task Modificar()
+    {
+        if (!await Validar())
+        {
+            await tecnicosService.Guardar(tecnicos);
+
+            Toast.Notify(new(ToastType.Warning, "Error al crear el origen de vuelo", "Este origen ya existe!"));
+            navigation.NavigateTo("/Tecnico/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Ese nombre ya esta registrado."));
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeTecnico = await tecnicosService.BuscarNombres(tecnicos.Nombres);
+
+        NombreRepetido = existeTecnico != null;
+        return NombreRepetido;
+    }
+
+
+}

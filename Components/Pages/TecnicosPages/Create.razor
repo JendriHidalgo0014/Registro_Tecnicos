@@ -1,0 +1,88 @@
+﻿@page "/Tecnicos/Create"
+@inject TecnicosService tecnicosService
+@rendermode InteractiveServer
+
+@*HTML*@
+<PageTitle>Crear un T&eacute;cnico</PageTitle>
+<EditForm Model="Tecnicos" OnInvalidSubmit="Guardar">
+	<DataAnnotationsValidator />
+
+	<div class="container">
+		<div class="card shadow-lg">
+			<div class="card-header text-center">
+				<h5 class="card-title">Crear T&eacute;nico</h5>
+			</div>
+		</div>
+
+		<div class="card-body">
+
+
+			@*TecnicoId*@
+			<div class="mb-3">
+				<label class="form-label"><strong>TecnicoId</strong></label>
+				<InputNumber class="form-control" @bind-Value="Tecnicos.TecnicoId" readonly></InputNumber>
+			</div>
+			@*Nombres*@
+			<div class="mb-3">
+				<label class="form-label"><strong>Nombres</strong></label>
+				<InputText class="form-control" @bind-Value="Tecnicos.Nombres"></InputText>
+				<ValidationMessage For="(() => Tecnicos.Nombres)" />
+			</div>
+			@*SueldoHora*@
+			<div class="mb-3">
+				<label class="form-label"><strong>SueldoHora</strong></label>
+				<InputNumber class="form-control" @bind-Value="Tecnicos.SueldoHora"></InputNumber>
+				<ValidationMessage For="(() => Tecnicos.SueldoHora)" />
+			</div>
+
+			@*footer*@
+			<div class="card-footer text-center mt-2">
+				<a href="/Tecnicos/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
+				<button type="submit" class="btn btnbtn-primary bi bi-floppy"> Guardar</button>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+@code {
+	public void Guardar()
+	{
+		if (!Validar())
+		{
+			var mensajeErrorValidacion = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Validacion",
+					Details = "Error al Revisar los campos. ",
+					Duration = 5000
+				};
+			notificationService.Notify(mensajeErrorValidacion);
+			return;
+		}
+		var guardo = tecnicosService.Guardar(this.Tecnicos);
+		if (guardo != null)
+		{
+			notificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = "Guardado",
+					Details = "Registro guardado correctamente. ",
+					Duration = 5000
+				});
+
+		}
+		else
+		{
+			notificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error",
+					Details = "Error al guardar el registro. ",
+					Duration = 5000
+				}
+		});
+	}
+
+}
+
+}

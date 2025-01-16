@@ -1,0 +1,107 @@
+﻿@page "/Tecnicos/Index"
+@inject TecnicosService tecnicosService
+@rendermode InteractiveServer
+
+<PageTitle>Técnico</PageTitle>
+
+<div class="main-container">
+    <div class="custom-card">
+        <header class="card-header">
+            <h1>Gestión de Técnicos</h1>
+            <a href="/Tecnico/Create" class="create-button">
+                <span class="bi bi-plus-circle"></span> Nuevo Técnico
+            </a>
+        </header>
+
+        <section class="filter-section">
+            <div class="filter-row">
+                <div>
+                    <label><strong>Filtrar por</strong></label>
+                    <InputSelect class="filter-select" @bind-Value="filtro">
+                        <option value="" selected disabled>Seleccione...</option>
+                        <option value="Id">ID Técnico</option>
+                        <option value="Nombres">Nombre</option>
+                        <option value="SueldoHora">Sueldo por Hora</option>
+                    </InputSelect>
+                </div>
+                <div>
+                    <label><strong>Búsqueda</strong></label>
+                    <div class="search-box">
+                        <input type="text" class="search-input" @bind="valorFiltro" placeholder="Ingrese búsqueda..." />
+                        <button type="button" class="search-button" @onclick="Buscar">
+                            <span class="bi bi-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Sueldo Hora</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tecnico in tecnicos)
+                    {
+                        <tr>
+                            <td>@tecnico.TecnicoId</td>
+                            <td>@tecnico.Nombres</td>
+                            <td>@tecnico.SueldoHora</td>
+                            <td>
+                                <a href="/Tecnico/Edit/@tecnico.TecnicoId" class="action-button edit">
+                                    <span class="bi bi-pencil-square"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/Tecnico/Delete/@tecnico.TecnicoId" class="action-button delete">
+                                    <span class="bi bi-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+@code {
+    public List<Tecnicos> tecnicos = new List<Tecnicos>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        tecnicos = await tecnicosService.Listar(t => true);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            if (filtro == "Id" && int.TryParse(valorFiltro, out int TecnicoId))
+            {
+                tecnicos = await tecnicosService.Listar(t => t.TecnicoId == TecnicoId);
+            }
+            else if (filtro == "Nombres")
+            {
+                tecnicos = await tecnicosService.Listar(t => t.Nombres.ToLower().Contains(valorFiltro.ToLower()));
+            }
+            else if (filtro == "SueldoHora" && float.TryParse(valorFiltro, out float SueldoHora))
+            {
+                tecnicos = await tecnicosService.Listar(t => t.SueldoHora == SueldoHora);
+            }
+        }
+        else
+        {
+            tecnicos = await tecnicosService.Listar(t => true);
+        }
+    }
+}
