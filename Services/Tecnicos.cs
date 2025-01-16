@@ -45,11 +45,11 @@ namespace Registro_Tecnicos.Services
 
 		}
 
-		public async Task<Tecnicos?> Buscar(int TecnicoId)
+		public async Task<Tecnicos?>Buscar(int TecnicoId)
 		{
 			await using var context = await DbContextFactory.CreateDbContextAsync();
 			return await context.Tecnicos.Include(t => t.TecnicoId)
-				.FirstOrDefaultAsync(t => t.Id == TecnicoId);
+				.FirstOrDefaultAsync(t => t.TecnicoId == TecnicoId);
 		}
 
 		public async Task<bool> Eliminar(int TecnicoId)
@@ -65,6 +65,15 @@ namespace Registro_Tecnicos.Services
 			return await context.Tecnicos.Where(criterio).ToListAsync();
 
 		}
+
+
+		public async Task<Tecnicos?> BuscarNombres(string nombres)
+		{
+			await using var context = await DbContextFactory.CreateDbContextAsync();
+			return await context.Tecnicos
+				.FirstOrDefaultAsync(e => e.Nombres == nombres);
+		}
+
 
 	}
 }

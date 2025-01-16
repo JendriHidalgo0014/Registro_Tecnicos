@@ -3,6 +3,7 @@ using Registro_Tecnicos.DAL;
 using Registro_Tecnicos.Models;
 using Microsoft.EntityFrameworkCore;
 using Registro_Tecnicos.Services;
+using BlazorBootstrap;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 
 //Agregamos el contexto al builder con el ConStr.
 builder.Services.AddDbContextFactory<Context>(Options => Options.UseSqlServer(ConStr));
+builder.Services.AddBlazorBootstrap();
 
 //Inyeccion del service.
 builder.Services.AddScoped<TecnicosService>();  
