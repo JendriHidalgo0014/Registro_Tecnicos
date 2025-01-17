@@ -66,7 +66,7 @@
         {
             await tecnicosService.Guardar(tecnicos);
 
-            Toast.Notify(new(ToastType.Warning, "Error al crear el origen de vuelo", "Este origen ya existe!"));
+            Toast.Notify(new(ToastType.Warning, "Ese nombre ya esta registrado!"));
             navigation.NavigateTo("/Tecnico/Index");
         }
         else
