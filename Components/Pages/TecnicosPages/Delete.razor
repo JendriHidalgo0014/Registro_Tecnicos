@@ -1,1 +1,68 @@
-﻿
+﻿@page "/Tecnicos/Delete/{tecnicosId:int}"
+@inject TecnicosService tecnicosService
+@inject NavigationManager Navegacion
+@rendermode InteractiveServer
+
+<PageTitle>Confirmar eliminación</PageTitle>
+<EditForm Model="TecnicoSeleccionado" OnValidSubmit="ConfirmarEliminacion">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="contenedor-principal">
+        <section class="tarjeta sombreado">
+            <!-- Encabezado -->
+            <header class="encabezado d-flex justify-content-center align-items-center">
+                <h4 class="titulo">Eliminar Técnico</h4>
+            </header>
+            <!-- Contenido -->
+            <article class="contenido">
+                <p class="texto-destacado">¿Deseas proceder con la eliminación de este técnico?</p>
+                <div class="detalle">
+                    <span><strong>ID: </strong>@TecnicoSeleccionado.TecnicoId</span>
+                </div>
+                <div class="detalle">
+                    <span><strong>Nombre: </strong>@TecnicoSeleccionado.Nombres</span>
+                </div>
+                <div class="detalle">
+                    <span><strong>Sueldo/Hora: </strong>@TecnicoSeleccionado.SueldoHora</span>
+                </div>
+            </article>
+            <!-- Pie -->
+            <footer class="pie text-center">
+                <a href="/Tecnico/Index" class="boton boton-cancelar"><i class="bi bi-arrow-left"></i> Regresar</a>
+                <button type="button" class="boton boton-confirmar" @onclick="ConfirmarEliminacion"><i class="bi bi-trash"></i> Confirmar</button>
+            </footer>
+        </section>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TecnicoId { get; set; }
+    public Tecnicos TecnicoSeleccionado { get; set; } = new Tecnicos();
+    [Inject] protected ToastService NotificacionServicio { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TecnicoId > 0)
+        {
+            TecnicoSeleccionado = await tecnicosService.Buscar(TecnicoId);
+        }
+    }
+
+    public async Task ConfirmarEliminacion()
+    {
+        if (TecnicoSeleccionado != null)
+        {
+            var resultado = await tecnicosService.Eliminar(TecnicoId);
+            if (resultado)
+            {
+                NotificacionServicio.Notify(new(ToastType.Success, $"Técnico eliminado exitosamente."));
+                Navegacion.NavigateTo("/Tecnico/Index");
+            }
+            else
+            {
+                NotificacionServicio.Notify(new(ToastType.Danger, "Ocurrió un error al intentar eliminar el técnico."));
+            }
+        }
+    }
+}
