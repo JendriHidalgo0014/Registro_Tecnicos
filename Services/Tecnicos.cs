@@ -9,17 +9,6 @@ namespace Registro_Tecnicos.Services
 	public class TecnicosService(IDbContextFactory<Context> DbContextFactory)
 	{
 
-		public async Task<bool> Guardar(Tecnicos tecnico)
-		{
-			if (!await Existe(tecnico.TecnicoId))
-			{
-				return await Insertar(tecnico);
-			}
-			else
-			{
-				return await Modificar(tecnico);
-			}
-		}
 
 		private async Task<bool> Existe(int TecnicoId)
 		{
@@ -37,6 +26,21 @@ namespace Registro_Tecnicos.Services
 
 		}
 
+
+		public async Task<bool> Guardar(Tecnicos tecnico)
+		{
+			if (!await Existe(tecnico.TecnicoId))
+			{
+				return await Insertar(tecnico);
+			}
+			else
+			{
+				return await Modificar(tecnico);
+			}
+		}
+
+
+
 		private async Task<bool> Modificar(Tecnicos tecnicos)
 		{
 			await using var context = await DbContextFactory.CreateDbContextAsync();
@@ -48,7 +52,7 @@ namespace Registro_Tecnicos.Services
 		public async Task<Tecnicos?>Buscar(int TecnicoId)
 		{
 			await using var context = await DbContextFactory.CreateDbContextAsync();
-			return await context.Tecnicos.Include(t => t.TecnicoId)
+			return await context.Tecnicos
 				.FirstOrDefaultAsync(t => t.TecnicoId == TecnicoId);
 		}
 
