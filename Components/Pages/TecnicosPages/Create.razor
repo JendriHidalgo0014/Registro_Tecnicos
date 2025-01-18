@@ -1,88 +1,98 @@
 ﻿@page "/Tecnicos/Create"
-@inject TecnicosService tecnicosService
 @rendermode InteractiveServer
-
-@*HTML*@
-<PageTitle>Crear un T&eacute;cnico</PageTitle>
-<EditForm Model="Tecnicos" OnInvalidSubmit="Guardar">
-	<DataAnnotationsValidator />
-
-	<div class="container">
-		<div class="card shadow-lg">
-			<div class="card-header text-center">
-				<h5 class="card-title">Crear T&eacute;nico</h5>
-			</div>
-		</div>
-
-		<div class="card-body">
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
 
 
-			@*TecnicoId*@
-			<div class="mb-3">
-				<label class="form-label"><strong>TecnicoId</strong></label>
-				<InputNumber class="form-control" @bind-Value="Tecnicos.TecnicoId" readonly></InputNumber>
-			</div>
-			@*Nombres*@
-			<div class="mb-3">
-				<label class="form-label"><strong>Nombres</strong></label>
-				<InputText class="form-control" @bind-Value="Tecnicos.Nombres"></InputText>
-				<ValidationMessage For="(() => Tecnicos.Nombres)" />
-			</div>
-			@*SueldoHora*@
-			<div class="mb-3">
-				<label class="form-label"><strong>SueldoHora</strong></label>
-				<InputNumber class="form-control" @bind-Value="Tecnicos.SueldoHora"></InputNumber>
-				<ValidationMessage For="(() => Tecnicos.SueldoHora)" />
-			</div>
+<PageTitle>Agregar Tecnico</PageTitle>
+<EditForm Model="nuevoTecnico" OnValidSubmit="GuardarTecnico">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-primary text-white">
+                <h4>Registrar Nuevo Técnico</h4>
+            </div>
 
-			@*footer*@
-			<div class="card-footer text-center mt-2">
-				<a href="/Tecnicos/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
-				<button type="submit" class="btn btnbtn-primary bi bi-floppy"> Guardar</button>
-			</div>
-		</div>
-	</div>
+            <div class="card-body">
+                <!-- Campo: TecnicoId -->
+                <div class="form-group">
+                    <label for="tecnicoId"><strong>ID del Técnico</strong></label>
+                    <InputNumber id="tecnicoId" class="form-control" @bind-Value="nuevoTecnico.TecnicoId" readonly />
+                    <ValidationMessage For="@(() => nuevoTecnico.TecnicoId)" />
+                </div>
+
+                <!-- Campo: Nombre -->
+                <div class="form-group">
+                    <label for="nombre"><strong>Nombre del Técnico</strong></label>
+                    <InputText id="nombre" class="form-control" @bind-Value="nuevoTecnico.Nombres" />
+                    <ValidationMessage For="@(() => nuevoTecnico.Nombres)" />
+                </div>
+
+                <!-- Campo: Sueldo -->
+                <div class="form-group">
+                    <label for="sueldoHora"><strong>Sueldo por Hora</strong></label>
+                    <InputNumber id="sueldoHora" class="form-control" @bind-Value="nuevoTecnico.SueldoHora" />
+                    <ValidationMessage For="@(() => nuevoTecnico.SueldoHora)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Tecnicos/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
 </EditForm>
 
 @code {
-	public void Guardar()
-	{
-		if (!Validar())
-		{
-			var mensajeErrorValidacion = new NotificationMessage
-				{
-					Severity = NotificationSeverity.Error,
-					Summary = "Validacion",
-					Details = "Error al Revisar los campos. ",
-					Duration = 5000
-				};
-			notificationService.Notify(mensajeErrorValidacion);
-			return;
-		}
-		var guardo = tecnicosService.Guardar(this.Tecnicos);
-		if (guardo != null)
-		{
-			notificationService.Notify(new NotificationMessage
-				{
-					Severity = NotificationSeverity.Success,
-					Summary = "Guardado",
-					Details = "Registro guardado correctamente. ",
-					Duration = 5000
-				});
+    public Tecnicos nuevoTecnico = new Tecnicos();
+    [Inject] protected ToastService ToastService { get; set; }
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
 
-		}
-		else
-		{
-			notificationService.Notify(new NotificationMessage
-				{
-					Severity = NotificationSeverity.Error,
-					Summary = "Error",
-					Details = "Error al guardar el registro. ",
-					Duration = 5000
-				}
-		});
-	}
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Tecnicos = await tecnicosService.Listar(c => c.TecnicoId > 0);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var nombreDuplicado = await tecnicosService.BuscarNombres(nuevoTecnico.Nombres);
+        if (nombreDuplicado != null)
+        {
+            ToastService.Notify(new(ToastType.Warning, "El nombre del técnico ya está registrado", " Por favor, utiliza un nombre diferente."));
+
+            return false;
+        }
+
+        if (nuevoTecnico.SueldoHora <= 0)
+        {
+            ToastService.Notify(new(ToastType.Danger, "Sueldo inválido", "El sueldo por hora debe ser mayor a 0."));
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task GuardarTecnico()
+    {
+        if (await Validar())
+        {
+            ToastService.Notify(new(ToastType.Primary, "Técnico registrado exitosamente.", "Se ha guardado el tecnico."));
+            await tecnicosService.Guardar(nuevoTecnico);
+            await Task.Delay(4000);
+            nuevoTecnico = new Tecnicos();
+            navigation.NavigateTo("/Tecnicos/Index");
+        }
+    }
+
+
 
 }
 
-}
+
+
+
+
+        

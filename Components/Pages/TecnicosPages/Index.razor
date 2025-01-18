@@ -1,76 +1,68 @@
 ﻿@page "/Tecnicos/Index"
 @inject TecnicosService tecnicosService
+@inject NavigationManager navigation
 @rendermode InteractiveServer
 
-<PageTitle>Técnico</PageTitle>
+<PageTitle>Tecnicos</PageTitle>
+<div class="container">
+    <div class="card-header bg-warning text-dark">
+        <h3 class="bi bi-person-fill"><strong> Registro de T&eacute;cnicos</strong></h3>
+    </div>
+    <div class="row text-left">
+        <div class="col-md-3">
+            <label for="filtro" class="form-label"><strong>Filtrar por:</strong></label>
+            <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                <option value="id">ID</option>
+                <option value="Nombre">Nombres</option>
+                <option value="SueldoHora">SueldoHora</option>
 
-<div class="main-container">
-    <div class="custom-card">
-        <header class="card-header">
-            <h1>Gestión de Técnicos</h1>
-            <a href="/Tecnico/Create" class="create-button">
-                <span class="bi bi-plus-circle"></span> Nuevo Técnico
-            </a>
-        </header>
-
-        <section class="filter-section">
-            <div class="filter-row">
-                <div>
-                    <label><strong>Filtrar por</strong></label>
-                    <InputSelect class="filter-select" @bind-Value="filtro">
-                        <option value="" selected disabled>Seleccione...</option>
-                        <option value="Id">ID Técnico</option>
-                        <option value="Nombres">Nombre</option>
-                        <option value="SueldoHora">Sueldo por Hora</option>
-                    </InputSelect>
-                </div>
-                <div>
-                    <label><strong>Búsqueda</strong></label>
-                    <div class="search-box">
-                        <input type="text" class="search-input" @bind="valorFiltro" placeholder="Ingrese búsqueda..." />
-                        <button type="button" class="search-button" @onclick="Buscar">
-                            <span class="bi bi-search"></span>
-                        </button>
-                    </div>
-                </div>
+            </InputSelect>
+        </div>
+        <div class="col-md-6">
+            <label for="valorFiltro" class="form-label"><strong>B&uacute;squeda:</strong></label>
+            <div class="input-group">
+                <InputText id="valorFiltro" @bind-Value="valorFiltro" class="form-control" placeholder="Buscar" />
+                <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
             </div>
-        </section>
+        </div>
+        <div class="col-md-3 d-flex align-items-end justify-content-md-end mt-3 mt-md-0">
+            <a href="/Tecnicos/Create" class="btn btn-warning bi bi-plus-square-fill"> Crear</a>
+        </div>
+    </div>
 
-        <section class="table-section">
-            <table class="custom-table">
-                <thead>
+    <div class="card-body">
+        <table class="table table-light">
+            <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>SueldoHora</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tecnicos in tecnicos)
+                {
                     <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Sueldo Hora</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
+                        <td class="text-center">@tecnicos.TecnicoId</td>
+                        <td class="text-center">@tecnicos.Nombres</td>
+                        <td class="text-center">@tecnicos.SueldoHora</td>
+
+                        <td class="text-center">
+                            <a href="/Tecnicos/Edit/@tecnicos.TecnicoId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
+                        </td>
+                        <td class="text-center">
+                            <a href="/Tecnicos/Delete/@tecnicos.TecnicoId" class="btn btn-danger bi bi-trash2-fill"></a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var tecnico in tecnicos)
-                    {
-                        <tr>
-                            <td>@tecnico.TecnicoId</td>
-                            <td>@tecnico.Nombres</td>
-                            <td>@tecnico.SueldoHora</td>
-                            <td>
-                                <a href="/Tecnico/Edit/@tecnico.TecnicoId" class="action-button edit">
-                                    <span class="bi bi-pencil-square"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <a href="/Tecnico/Delete/@tecnico.TecnicoId" class="action-button delete">
-                                    <span class="bi bi-trash"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </section>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+
+
 
 @code {
     public List<Tecnicos> tecnicos = new List<Tecnicos>();
@@ -86,18 +78,14 @@
     {
         if (!string.IsNullOrWhiteSpace(valorFiltro))
         {
-            if (filtro == "Id" && int.TryParse(valorFiltro, out int TecnicoId))
-            {
-                tecnicos = await tecnicosService.Listar(t => t.TecnicoId == TecnicoId);
-            }
-            else if (filtro == "Nombres")
-            {
-                tecnicos = await tecnicosService.Listar(t => t.Nombres.ToLower().Contains(valorFiltro.ToLower()));
-            }
-            else if (filtro == "SueldoHora" && float.TryParse(valorFiltro, out float SueldoHora))
-            {
-                tecnicos = await tecnicosService.Listar(t => t.SueldoHora == SueldoHora);
-            }
+            string filtroLower = filtro.ToLower();
+            string valorFiltroLower = valorFiltro.ToLower();
+
+            tecnicos = await tecnicosService.Listar(t =>
+                (filtroLower == "id" && t.TecnicoId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "nombre" && t.Nombres.ToLower().Contains(valorFiltroLower)) ||
+                (filtroLower == "sueldohora" && t.SueldoHora.ToString().Contains(valorFiltro))
+            );
         }
         else
         {
