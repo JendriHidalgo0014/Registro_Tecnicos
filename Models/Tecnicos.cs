@@ -12,8 +12,12 @@ public class Tecnicos
 	public int TecnicoId { get; set; }
 
 	[Required(ErrorMessage = "Este campo es requerido")]
+	[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "El campo solo puede contener letras y espacios.")]
 
-	public string Nombres { get; set; } = null!;
+
+	public string Nombres { get; set; }
+
+	[Required(ErrorMessage = "Este campo es requerido")]
 
 	public int SueldoHora { get; set; }
 
