@@ -5,7 +5,7 @@
 namespace Registro_Tecnicos.Migrations
 {
     /// <inheritdoc />
-    public partial class InicialV2 : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace Registro_Tecnicos.Migrations
                     TecnicoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SueldoHora = table.Column<int>(type: "int", nullable: false)
+                    SueldoHora = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
