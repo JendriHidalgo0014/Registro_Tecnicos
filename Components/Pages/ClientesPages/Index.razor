@@ -1,0 +1,104 @@
+﻿@page "/Clientes/Index"
+@inject ClientesService clientesService
+
+
+
+<PageTitle>Clientes</PageTitle>
+<div class="container">
+    <div class="card-header bg-warning text-dark">
+        <h3 class="bi bi-person-fill"><strong> Registro de Clientes</strong></h3>
+    </div>
+    <div class="row text-left">
+        <div class="col-md-3">
+            <label for="filtro" class="form-label"><strong>Filtrar por:</strong></label>
+            <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                <option value="id">ID</option>
+                <option value="Nombre">Nombres</option>
+                <option value="FechaIngreso">FechaIngreso</option>
+                <option value="Direccion">Direccion</option>
+                <option value="LimiteCredito">LimiteCredito</option>
+                <option value="RNC">RNC</option>
+                <option value="TecnicoId">TecnicoId</option>
+            </InputSelect>
+        </div>
+        <div class="col-md-6">
+            <label for="valorFiltro" class="form-label"><strong>B&uacute;squeda:</strong></label>
+            <div class="input-group">
+                <InputText id="valorFiltro" @bind-Value="valorFiltro" class="form-control" placeholder="Buscar" />
+                <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-end justify-content-md-end mt-3 mt-md-0">
+            <a href="/Clientes/Create" class="btn btn-warning bi bi-plus-square-fill"> Crear</a>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-light">
+            <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>SueldoHora</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Clientes in Clientes)
+                {
+                    <tr>
+                        <td class="text-center">@Clientes.TecnicoId</td>
+                        <td class="text-center">@Clientes.ClienteId</td>
+                        <td class="text-center">@Clientes.Nombres</td>
+                        <td class="text-center">@Clientes.FechaIngreso</td>
+                        <td class="text-center">@Clientes.Direccion</td>
+                        <td class="text-center">@Clientes.RNC</td>
+                        <td class="text-center">@Clientes.LimiteCredito</td>
+
+
+                        <td class="text-center">
+                            <a href="/Clientes/Edit/@Clientes.ClienteId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
+                        </td>
+                        <td class="text-center">
+                            <a href="/Clientes/Delete/@Clientes.ClienteId" class="btn btn-danger bi bi-trash2-fill"></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    public List<Clientes> Clientes = new List<Clientes>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Clientes = await clientesService.Listar(c => true);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            string filtroLower = filtro.ToLower();
+            string valorFiltroLower = valorFiltro.ToLower();
+
+            Clientes = await clientesService.Listar(t =>
+                (filtroLower == "id" && t.ClienteId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "nombre" && t.Nombres.ToLower().Contains(valorFiltroLower)) ||
+                (filtroLower == "FechaIngreso" && t.FechaIngreso.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Direccion" && t.Direccion.ToLower().Contains(valorFiltroLower)) ||
+                (filtroLower == "RNC" && t.RNC.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "LimiteCredito" && t.LimiteCredito.ToString().Contains(valorFiltro)) 
+            );
+        }
+        else
+        {
+            Clientes = await clientesService.Listar(t => true);
+        }
+    }
+}
