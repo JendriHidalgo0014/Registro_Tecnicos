@@ -39,10 +39,15 @@
             <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
-                    <th>SueldoHora</th>
+                    <th>TecnicoID</th>
+                    <th>Nombres</th>
+                    <th>FechaIngreso</th>
+                    <th>Direccion</th>
+                    <th>RNC</th>
+                    <th>LimiteCredito</th>
                     <th>Modificar</th>
                     <th>Eliminar</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +95,7 @@
 
             Clientes = await clientesService.Listar(t =>
                 (filtroLower == "id" && t.ClienteId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Tecnicoid" && t.TecnicoId.ToString().Contains(valorFiltro)) ||
                 (filtroLower == "nombre" && t.Nombres.ToLower().Contains(valorFiltroLower)) ||
                 (filtroLower == "FechaIngreso" && t.FechaIngreso.ToString().Contains(valorFiltro)) ||
                 (filtroLower == "Direccion" && t.Direccion.ToLower().Contains(valorFiltroLower)) ||

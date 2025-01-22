@@ -38,11 +38,11 @@
                 <!-- Campo: FechaIngreso -->
                 <div class="form-group">
                     <label for="FechaIngreso"><strong>Fecha de ingreso del Cliente</strong></label>
-                    <InputText id="FechaIngreso" class="form-control" @bind-Value="FechaIngresoString" />
+                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngresoString" />
                     <ValidationMessage For="@(() => FechaIngresoString)" />
                 </div>
 
-                <!-- Campo: LimiteIngreso -->
+                <!-- Campo: LimiteCredito -->
                 <div class="form-group">
                     <label for="LimiteCredito"><strong>Limite de Credito del Cliente</strong></label>
                     <InputNumber LimiteCredito="LimiteCredito" class="form-control" @bind-Value="clienteModificado.LimiteCredito" />

@@ -30,14 +30,14 @@
                 <!-- Campo: FechaIngreso -->
                 <div class="form-group">
                     <label for="FechaIngreso"><strong>Fecha de ingreso</strong></label>
-                    <InputNumber id="FechaIngreso" class="form-control" @bind-Value="nuevoCliente.FechaIngreso" />
+                    <InputDate @bind-Value="nuevoCliente.FechaIngreso" @bind-Value:format="yyyy-MM-dd" />
                     <ValidationMessage For="@(() => nuevoCliente.FechaIngreso)" />
                 </div>
 
                 <!-- Campo: Direccion -->
                 <div class="form-group">
                     <label for="Direccion"><strong>Dirección del cliente</strong></label>
-                    <InputNumber id="Direccion" class="form-control" @bind-Value="nuevoCliente.Direccion" />
+                    <InputText id="Direccion" class="form-control" @bind-Value="nuevoCliente.Direccion" />
                     <ValidationMessage For="@(() => nuevoCliente.Direccion)" />
                 </div>
 
