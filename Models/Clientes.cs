@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Registro_Tecnicos.Models
@@ -10,8 +11,6 @@ namespace Registro_Tecnicos.Models
 
 		public int ClienteId { get; set; }
 
-		public int TecnicoId { get; set; }
-
 		public DateTime FechaIngreso { get; set; }
 
 		public string Nombres { get; set; }
@@ -22,5 +21,7 @@ namespace Registro_Tecnicos.Models
 
 		public decimal LimiteCredito { get; set; }
 
+		[ForeignKey("TecnicoId")]
+		public int TecnicoId { get; set; }
 	}
 }
