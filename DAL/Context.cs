@@ -9,5 +9,8 @@ namespace Registro_Tecnicos.DAL
 
 		public DbSet<Tecnicos> Tecnicos { get; set; }
 
+		public DbSet<Clientes> Clientes { get; set; }
+
+
 	}
 }
