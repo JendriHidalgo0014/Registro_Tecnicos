@@ -1,5 +1,108 @@
-﻿<h3>Create</h3>
+﻿@page "/Clientes/Create"
+@rendermode InteractiveServer
+@inject ClientesService clientesService
+@inject NavigationManager navigation
 
+<PageTitle>Agregar Cliente</PageTitle>
+<EditForm Model="nuevoCliente" OnValidSubmit="GuardarCliente">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Registrar Nuevo Cliente</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: ClienteId -->
+                <div class="form-group">
+                    <label for="clienteId"><strong>ID del Cliente</strong></label>
+                    <InputNumber id="clienteId" class="form-control" @bind-Value="nuevoCliente.ClienteId" readonly />
+                    <ValidationMessage For="@(() => nuevoCliente.ClienteId)" />
+                </div>
+
+                <!-- Campo: Nombres -->
+                <div class="form-group">
+                    <label for="nombre"><strong>Nombre del Cliente</strong></label>
+                    <InputText id="nombre" class="form-control" @bind-Value="nuevoCliente.Nombres" />
+                    <ValidationMessage For="@(() => nuevoCliente.Nombres)" />
+                </div>
+
+                <!-- Campo: FechaIngreso -->
+                <div class="form-group">
+                    <label for="FechaIngreso"><strong>Fecha de ingreso</strong></label>
+                    <InputNumber id="FechaIngreso" class="form-control" @bind-Value="nuevoCliente.FechaIngreso" />
+                    <ValidationMessage For="@(() => nuevoCliente.FechaIngreso)" />
+                </div>
+
+                <!-- Campo: Direccion -->
+                <div class="form-group">
+                    <label for="Direccion"><strong>Dirección del cliente</strong></label>
+                    <InputNumber id="Direccion" class="form-control" @bind-Value="nuevoCliente.Direccion" />
+                    <ValidationMessage For="@(() => nuevoCliente.Direccion)" />
+                </div>
+
+                <!-- Campo: RNC -->
+                <div class="form-group">
+                    <label for="RNC"><strong>RNC del cliente</strong></label>
+                    <InputNumber id="Direccion" class="form-control" @bind-Value="nuevoCliente.RNC" />
+                    <ValidationMessage For="@(() => nuevoCliente.RNC)" />
+                </div>
+
+                <!-- Campo: LimiteCredito -->
+                <div class="form-group">
+                    <label for="LimiteCredito"><strong>Limitede credito del cliente</strong></label>
+                    <InputNumber id="Direccion" class="form-control" @bind-Value="nuevoCliente.RNC" />
+                    <ValidationMessage For="@(() => nuevoCliente.RNC)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Tecnicos/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 @code {
+    public Clientes nuevoCliente = new Clientes();
+    [Inject] protected ToastService ToastService { get; set; }
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
 
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Clientes = await clientesService.Listar(c => c.ClienteId > 0);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var nombreDuplicado = await clientesService.BuscarNombres(nuevoCliente.Nombres);
+        if (nombreDuplicado != null)
+        {
+            ToastService.Notify(new(ToastType.Warning, "El nombre del técnico ya está registrado", " Por favor, utiliza un nombre diferente."));
+
+            return false;
+        }
+
+        if (nuevoCliente.RNC <= 10)
+        {
+            ToastService.Notify(new(ToastType.Danger, "RNC inválido", "El RNC debe ser menor a 10."));
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task GuardarCliente()
+    {
+        if (await Validar())
+        {
+            ToastService.Notify(new(ToastType.Primary, "Cliente registrado exitosamente.", "Se ha guardado el cliente."));
+            await clientesService.Guardar(nuevoCliente);
+            await Task.Delay(4000);
+            nuevoCliente = new Clientes();
+            navigation.NavigateTo("/Clientes/Index");
+        }
+    }
 }
