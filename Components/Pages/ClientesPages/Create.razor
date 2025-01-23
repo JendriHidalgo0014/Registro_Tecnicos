@@ -28,10 +28,10 @@
                 </div>
 
                 <!-- Campo: FechaIngreso -->
-                <div class="form-group">
-                    <label for="FechaIngreso"><strong>Fecha de ingreso</strong></label>
-                    <InputDate @bind-Value="nuevoCliente.FechaIngreso" @bind-Value:format="yyyy-MM-dd" />
-                    <ValidationMessage For="@(() => nuevoCliente.FechaIngreso)" />
+                 <div class="form-group">
+                    <label for="FechaIngreso"><strong>Fecha de ingreso del Cliente</strong></label>
+                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngreso" />
+                    <ValidationMessage For="@(() => FechaIngreso)" />
                 </div>
 
                 <!-- Campo: Direccion -->
@@ -58,7 +58,7 @@
 
             <div class="card-footer text-center">
                 <button type="submit" class="btn btn-success ml-2">Registrar</button>
-                <a href="/Clientes/Index" class="btn btn-danger ml-2">Volver</a>
+                <a href="/Tecnicos/Index" class="btn btn-danger ml-2">Volver</a>
             </div>
         </div>
     </div>
@@ -67,6 +67,7 @@
     public Clientes nuevoCliente = new Clientes();
     [Inject] protected ToastService ToastService { get; set; }
     public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    private DateTime? FechaIngreso { get; set; }
 
 
 

@@ -38,8 +38,8 @@
                 <!-- Campo: FechaIngreso -->
                 <div class="form-group">
                     <label for="FechaIngreso"><strong>Fecha de ingreso del Cliente</strong></label>
-                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngresoString" />
-                    <ValidationMessage For="@(() => FechaIngresoString)" />
+                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngreso" />
+                    <ValidationMessage For="@(() => FechaIngreso)" />
                 </div>
 
                 <!-- Campo: LimiteCredito -->
@@ -65,20 +65,22 @@
     public Clientes clienteModificado { get; set; } = new Clientes();
     public bool NombreRepetido { get; set; }
     public List<Clientes> List { get; set; } = new List<Clientes>();
+    private DateTime? FechaIngreso { get; set; } // Cambiar a DateTime o nullable
+
     private string FechaIngresoString
     {
-        get => clienteModificado.FechaIngreso.ToString("yyyy-MM-dd"); 
-        set => clienteModificado.FechaIngreso = DateTime.Parse(value); 
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (ClienteId > 0)
+        get => FechaIngreso?.ToString("yyyy-MM-dd") ?? string.Empty;
+        set 
         {
-            clienteModificado = await clientesService.Buscar(ClienteId);
+            if (DateTime.TryParse(value, out var parsedDate))
+            {
+                FechaIngreso = parsedDate;
+            }
+            else
+            {
+                FechaIngreso = null;
+            }
         }
-
-
     }
 
 
