@@ -1,6 +1,7 @@
 ﻿@page "/Clientes/Edit/{ClienteId:int}"
 @inject ToastService Toast
 @inject ClientesService clientesService
+@inject TecnicosService tecnicosService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
 
@@ -10,7 +11,7 @@
     <div class="container">
         <div class="card shadow">
             <div class="card-header text-center bg-danger text-white">
-                <h4>Registrar Nuevo Cliente</h4>
+                <h4>Modificar Cliente</h4>
             </div>
 
             <div class="card-body">
@@ -35,11 +36,18 @@
                     <ValidationMessage For="@(() => clienteModificado.Direccion)" />
                 </div>
 
+                @*RNC*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>RNC</strong></label>
+                    <InputNumber class="form-control" @bind-Value="clienteModificado.RNC"></InputNumber>
+                    <ValidationMessage For="@(()=> clienteModificado.RNC)"></ValidationMessage>
+                </div>
+
                 <!-- Campo: FechaIngreso -->
                 <div class="form-group">
                     <label for="FechaIngreso"><strong>Fecha de ingreso del Cliente</strong></label>
-                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngreso" />
-                    <ValidationMessage For="@(() => FechaIngreso)" />
+                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="clienteModificado.FechaIngreso" />
+                    <ValidationMessage For="@(() => clienteModificado.FechaIngreso)" />
                 </div>
 
                 <!-- Campo: LimiteCredito -->
@@ -49,10 +57,27 @@
                     <ValidationMessage For="@(() => clienteModificado.LimiteCredito)" />
                 </div>
 
+                <!-- Campo: TecnicoId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tecnico</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@clienteModificado.TecnicoId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Tecnicos in Tecnicos)
+                            {
+                                <option value="@Tecnicos.TecnicoId">@Tecnicos.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
             </div>
 
             <div class="card-footer text-center">
-                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <button type="submit" class="btn btn-success ml-2">Confirmar</button>
                 <a href="/Clientes/Index" class="btn btn-danger ml-2">Volver</a>
             </div>
         </div>
@@ -64,8 +89,20 @@
     public int ClienteId { get; set; }
     public Clientes clienteModificado { get; set; } = new Clientes();
     public bool NombreRepetido { get; set; }
-    public List<Clientes> List { get; set; } = new List<Clientes>();
-    private DateTime? FechaIngreso { get; set; } // Cambiar a DateTime o nullable
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    private DateTime? FechaIngreso { get; set; } 
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteId > 0)
+        {
+            clienteModificado = await clientesService.Buscar(ClienteId);
+            Tecnicos = await tecnicosService.Listar(t => true);
+
+        }
+
+
+    }
 
     private string FechaIngresoString
     {
@@ -84,11 +121,13 @@
     }
 
 
+
     public async Task<bool> Validar()
     {
         var existeCliente = await clientesService.BuscarNombres(clienteModificado.Nombres);
+        var existeRNC = await clientesService.BuscarRNC(clienteModificado.RNC);
 
-        NombreRepetido = existeCliente != null;
+        NombreRepetido = existeCliente != null && existeRNC != null;
         return NombreRepetido;
     }
 
