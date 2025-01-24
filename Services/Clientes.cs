@@ -75,5 +75,12 @@ namespace Registro_Tecnicos.Services
 			return await context.Clientes
 				.FirstOrDefaultAsync(e => e.Nombres == Nombres);
 		}
+
+		public async Task<Clientes?> BuscarRNC(int RNC)
+		{
+			await using var context = await DbContextFactory.CreateDbContextAsync();
+			return await context.Clientes
+				.FirstOrDefaultAsync(e => e.RNC == RNC);
+		}
 	}
 }
