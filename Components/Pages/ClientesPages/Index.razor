@@ -39,8 +39,8 @@
         <table class="table table-light">
             <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
                 <tr>
+                    <th>TecnicoNombre</th>
                     <th>ID</th>
-                    <th>TecnicoID</th>
                     <th>Nombres</th>
                     <th>FechaIngreso</th>
                     <th>Direccion</th>
@@ -63,7 +63,7 @@
                         <td class="text-center">@Clientes.FechaIngreso</td>
                         <td class="text-center">@Clientes.Direccion</td>
                         <td class="text-center">@Clientes.RNC</td>
-                        <td class="text-center">@Clientes.LimiteCredito</td>
+                        <td class="text-center">@Clientes.LimiteCredito.ToString("C")</td>
 
 
                         <td class="text-center">
