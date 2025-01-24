@@ -88,7 +88,6 @@
     [Parameter]
     public int ClienteId { get; set; }
     public Clientes clienteModificado { get; set; } = new Clientes();
-    public bool NombreRepetido { get; set; }
     public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
     private DateTime? FechaIngreso { get; set; } 
 
@@ -125,10 +124,9 @@
     public async Task<bool> Validar()
     {
         var existeCliente = await clientesService.BuscarNombres(clienteModificado.Nombres);
-        var existeRNC = await clientesService.BuscarRNC(clienteModificado.RNC);
+        var RNCDuplicado = await clientesService.BuscarRNC(clienteModificado.RNC);
 
-        NombreRepetido = existeCliente != null && existeRNC != null;
-        return NombreRepetido;
+        return existeCliente != null && RNCDuplicado != null;
     }
 
 

@@ -1,6 +1,7 @@
 ﻿@page "/Clientes/Create"
 @rendermode InteractiveServer
 @inject ClientesService clientesService
+@inject TecnicosService tecnicosService
 @inject NavigationManager navigation
 
 <PageTitle>Agregar Cliente</PageTitle>
@@ -30,8 +31,8 @@
                 <!-- Campo: FechaIngreso -->
                  <div class="form-group">
                     <label for="FechaIngreso"><strong>Fecha de ingreso del Cliente</strong></label>
-                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="FechaIngreso" />
-                    <ValidationMessage For="@(() => FechaIngreso)" />
+                    <InputDate id="FechaIngreso" class="form-control" @bind-Value="nuevoCliente.FechaIngreso" />
+                    <ValidationMessage For="@(() => nuevoCliente.FechaIngreso)" />
                 </div>
 
                 <!-- Campo: Direccion -->
@@ -51,14 +52,31 @@
                 <!-- Campo: LimiteCredito -->
                 <div class="form-group">
                     <label for="LimiteCredito"><strong>Limitede credito del cliente</strong></label>
-                    <InputNumber id="Direccion" class="form-control" @bind-Value="nuevoCliente.RNC" />
-                    <ValidationMessage For="@(() => nuevoCliente.RNC)" />
+                    <InputNumber id="LimiteCredito" class="form-control" @bind-Value="nuevoCliente.LimiteCredito" />
+                    <ValidationMessage For="@(() => nuevoCliente.LimiteCredito)" />
+                </div>
+
+                <!-- Campo: TecnicoId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tecnico</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@nuevoCliente.TecnicoId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Tecnicos in Tecnicos)
+                            {
+                                <option value="@Tecnicos.TecnicoId">@Tecnicos.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
                 </div>
             </div>
 
             <div class="card-footer text-center">
                 <button type="submit" class="btn btn-success ml-2">Registrar</button>
-                <a href="/Tecnicos/Index" class="btn btn-danger ml-2">Volver</a>
+                <a href="/Clientes/Index" class="btn btn-danger ml-2">Volver</a>
             </div>
         </div>
     </div>
@@ -67,6 +85,7 @@
     public Clientes nuevoCliente = new Clientes();
     [Inject] protected ToastService ToastService { get; set; }
     public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
     private DateTime? FechaIngreso { get; set; }
 
 
@@ -74,14 +93,25 @@
     protected override async Task OnInitializedAsync()
     {
         Clientes = await clientesService.Listar(c => c.ClienteId > 0);
+        Tecnicos = await tecnicosService.Listar(t => true);
+
     }
 
     public async Task<bool> Validar()
     {
         var nombreDuplicado = await clientesService.BuscarNombres(nuevoCliente.Nombres);
+        var RNCDuplicado = await clientesService.BuscarRNC(nuevoCliente.RNC);
+
         if (nombreDuplicado != null)
         {
-            ToastService.Notify(new(ToastType.Warning, "El nombre del técnico ya está registrado", " Por favor, utiliza un nombre diferente."));
+            ToastService.Notify(new(ToastType.Warning, "El nombre del cliente ya está registrado", " Por favor, utiliza un nombre diferente."));
+
+            return false;
+        }
+
+        if (RNCDuplicado != null)
+        {
+            ToastService.Notify(new(ToastType.Warning, "Ese RNC ya está registrado", " Por favor, utiliza un RNC diferente."));
 
             return false;
         }
