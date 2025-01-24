@@ -1,5 +1,6 @@
 ﻿@page "/Clientes/Index"
 @inject ClientesService clientesService
+@inject TecnicosService tecnicosService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
 
@@ -53,8 +54,10 @@
             <tbody>
                 @foreach (var Clientes in Clientes)
                 {
+                    var Tecnico = Tecnicos.FirstOrDefault(t => t.TecnicoId == Clientes.TecnicoId);
+
                     <tr>
-                        <td class="text-center">@Clientes.TecnicoId</td>
+                        <td>@(Tecnico?.Nombres ?? "No se encontró")</td>
                         <td class="text-center">@Clientes.ClienteId</td>
                         <td class="text-center">@Clientes.Nombres</td>
                         <td class="text-center">@Clientes.FechaIngreso</td>
@@ -78,12 +81,15 @@
 
 @code {
     public List<Clientes> Clientes = new List<Clientes>();
+    public List<Tecnicos> Tecnicos = new List<Tecnicos>();
     private string filtro = "";
     private string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
         Clientes = await clientesService.Listar(c => true);
+        Tecnicos = await tecnicosService.Listar(c => true);
+
     }
 
     private async Task Buscar()
