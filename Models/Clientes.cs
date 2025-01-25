@@ -20,7 +20,6 @@ namespace Registro_Tecnicos.Models
 		public string Nombres { get; set; }
 
 		[Required(ErrorMessage = "Este campo es requerido")]
-		[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "El campo solo puede contener letras y espacios.")]
 		public string Direccion {  get; set; }
 
 		[Required(ErrorMessage = "Este campo es requerido")]
