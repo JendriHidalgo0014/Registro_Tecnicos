@@ -12,7 +12,7 @@ using Registro_Tecnicos.DAL;
 namespace Registro_Tecnicos.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250122151045_InicialV2")]
+    [Migration("20250127230918_InicialV2")]
     partial class InicialV2
     {
         /// <inheritdoc />
@@ -24,6 +24,23 @@ namespace Registro_Tecnicos.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Registro_Tecnicos.Models.Ciudades", b =>
+                {
+                    b.Property<int>("CiudadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CiudadId"));
+
+                    b.Property<string>("CiudadNombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CiudadId");
+
+                    b.ToTable("Ciudades");
+                });
 
             modelBuilder.Entity("Registro_Tecnicos.Models.Clientes", b =>
                 {

@@ -1,0 +1,82 @@
+﻿@page "/Ciudades/Edit/{CiudadId:int}"
+@inject ToastService Toast
+@inject CiudadesService ciudadesService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Editar Ciudad</PageTitle>
+<EditForm Model="ciudadModificada" OnValidSubmit="ModificarCiudad">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Modificar Ciudad</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: CiudadId -->
+                <div class="form-group">
+                    <label for="clienteId"><strong>ID de la Ciudad</strong></label>
+                    <InputNumber id="clienteId" class="form-control" @bind-Value="ciudadModificada.CiudadId" readonly />
+                    <ValidationMessage For="@(() => ciudadModificada.CiudadId)" />
+                </div>
+
+                <!-- Campo: CiudadNombre -->
+                <div class="form-group">
+                    <label for="nombre"><strong>Nombre del Cliente</strong></label>
+                    <InputText id="nombre" class="form-control" @bind-Value="ciudadModificada.CiudadNombre" />
+                    <ValidationMessage For="@(() => ciudadModificada.CiudadNombre)" />
+                </div>
+
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Confirmar</button>
+                <a href="/Clientes/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public int CiudadId { get; set; }
+    public Ciudades ciudadModificada { get; set; } = new Ciudades();
+    public List<Ciudades> Ciudades { get; set; } = new List<Ciudades>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CiudadId > 0)
+        {
+            ciudadModificada = await ciudadesService.Buscar(CiudadId);
+            Ciudades = await ciudadesService.Listar(t => true);
+
+        }
+
+
+    }
+
+
+    public async Task<bool> Validar()
+    {
+        var existeCiudad = await ciudadesService.BuscarNombres(ciudadModificada.CiudadNombre);
+
+        return existeCiudad != null;
+    }
+
+
+
+    public async Task ModificarCiudad()
+    {
+        if (!await Validar())
+        {
+            await ciudadesService.Guardar(ciudadModificada);
+
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "La ciudad se ha modificado"));
+            navigation.NavigateTo("/Ciudades/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Error al modificar la ciudad", "Esa ciudad ya esta registrada."));
+        }
+    }
+}

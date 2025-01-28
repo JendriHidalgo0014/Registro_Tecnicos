@@ -22,6 +22,23 @@ namespace Registro_Tecnicos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Registro_Tecnicos.Models.Ciudades", b =>
+                {
+                    b.Property<int>("CiudadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CiudadId"));
+
+                    b.Property<string>("CiudadNombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CiudadId");
+
+                    b.ToTable("Ciudades");
+                });
+
             modelBuilder.Entity("Registro_Tecnicos.Models.Clientes", b =>
                 {
                     b.Property<int>("ClienteId")
