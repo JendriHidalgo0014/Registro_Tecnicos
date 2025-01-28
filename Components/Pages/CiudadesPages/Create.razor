@@ -4,7 +4,7 @@
 @rendermode InteractiveServer
 
 <PageTitle>Agregar Ciudad</PageTitle>
-<EditForm Model="nuevoCliente" OnValidSubmit="GuardarCliente">
+<EditForm Model="nuevaCiudad" OnValidSubmit="GuardarCiudad">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow">
@@ -15,15 +15,15 @@
             <div class="card-body">
                 <!-- Campo: CiudadId -->
                 <div class="form-group">
-                    <label for="clienteId"><strong>ID del Cliente</strong></label>
-                    <InputNumber id="clienteId" class="form-control" @bind-Value="nuevoCliente.ClienteId" readonly />
+                    <label for="clienteId"><strong>ID de la Ciudad</strong></label>
+                    <InputNumber id="clienteId" class="form-control" @bind-Value="nuevaCiudad.CiudadId" readonly />
                     <ValidationMessage For="@(() => nuevaCiudad.CiudadId)" />
                 </div>
 
                 <!-- Campo: CiudadNombre -->
                 <div class="form-group">
-                    <label for="nombre"><strong>Nombre del Cliente</strong></label>
-                    <InputText id="nombre" class="form-control" @bind-Value="nuevoCliente.Nombres" />
+                    <label for="nombre"><strong>Nombre de la Ciudad</strong></label>
+                    <InputText id="nombre" class="form-control" @bind-Value="nuevaCiudad.CiudadNombre" />
                     <ValidationMessage For="@(() => nuevaCiudad.CiudadNombre)" />
                 </div>
 
@@ -66,11 +66,11 @@
     {
         if (await Validar())
         {
-            ToastService.Notify(new(ToastType.Primary, "Cliente registrado exitosamente.", "Se ha guardado el cliente."));
+            ToastService.Notify(new(ToastType.Primary, "Ciudad registrada exitosamente.", "Se ha guardado la Ciudad."));
             await ciudadesService.Guardar(nuevaCiudad);
             await Task.Delay(4000);
             nuevaCiudad = new Ciudades();
-            navigation.NavigateTo("/Clientes/Index");
+            navigation.NavigateTo("/Ciudades/Index");
         }
     }
 }

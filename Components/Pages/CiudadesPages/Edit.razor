@@ -5,7 +5,7 @@
 @rendermode InteractiveServer
 
 <PageTitle>Editar Ciudad</PageTitle>
-<EditForm Model="ciudadModificada" OnValidSubmit="ModificarCliente">
+<EditForm Model="ciudadModificada" OnValidSubmit="ModificarCiudad">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow">
@@ -17,14 +17,14 @@
                 <!-- Campo: CiudadId -->
                 <div class="form-group">
                     <label for="clienteId"><strong>ID de la Ciudad</strong></label>
-                    <InputNumber id="clienteId" class="form-control" @bind-Value="clienteModificado.ClienteId" readonly />
+                    <InputNumber id="clienteId" class="form-control" @bind-Value="ciudadModificada.CiudadId" readonly />
                     <ValidationMessage For="@(() => ciudadModificada.CiudadId)" />
                 </div>
 
                 <!-- Campo: CiudadNombre -->
                 <div class="form-group">
                     <label for="nombre"><strong>Nombre del Cliente</strong></label>
-                    <InputText id="nombre" class="form-control" @bind-Value="clienteModificado.Nombres" />
+                    <InputText id="nombre" class="form-control" @bind-Value="ciudadModificada.CiudadNombre" />
                     <ValidationMessage For="@(() => ciudadModificada.CiudadNombre)" />
                 </div>
 
