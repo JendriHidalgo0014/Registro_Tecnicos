@@ -1,4 +1,10 @@
-﻿<h3>Delete</h3>
+﻿@page "/Tickets/Delete/{TicketId:int}"
+@inject ToastService Toast
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+
+<h3>Delete</h3>
 
 @code {
 

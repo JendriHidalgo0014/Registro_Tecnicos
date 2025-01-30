@@ -1,5 +1,68 @@
-﻿<h3>Edit</h3>
+﻿@page "/Tickets/Edit/{TicketId:int}"
+@inject ToastService Toast
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+
+<h3>Edit</h3>
 
 @code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets ticketModificado { get; set; } = new Tickets();
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    private DateTime? Fecha { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (TicketId > 0)
+        {
+            ticketModificado = await ticketsService.Buscar(TicketId);
+            Tecnicos = await tecnicosService.Listar(t => true);
+
+        }
+
+
+    }
+
+    private string FechaIngresoString
+    {
+        get => Fecha?.ToString("yyyy-MM-dd") ?? string.Empty;
+        set
+        {
+            if (DateTime.TryParse(value, out var parsedDate))
+            {
+                Fecha = parsedDate;
+            }
+            else
+            {
+                Fecha = null;
+            }
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeTicket = await ticketsService.BuscarDescripcion(ticketModificado.Descripcion);
+
+        return existeTicket != null;
+    }
+
+
+    public async Task ModificarCliente()
+    {
+        if (!await Validar())
+        {
+            await ticketsService.Guardar(ticketModificado);
+
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El cliente se ha modificado"));
+            navigation.NavigateTo("/Tickets/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el cliente", "Ese nombre ya esta registrado."));
+        }
+    }
 }

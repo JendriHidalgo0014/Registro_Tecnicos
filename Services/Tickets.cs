@@ -61,6 +61,12 @@ namespace Registro_Tecnicos.Services
 				.ExecuteDeleteAsync() > 0;
 		}
 
+		public async Task<Tickets?> BuscarDescripcion(string Descripcion)
+		{
+			await using var context = await DbContextFactory.CreateDbContextAsync();
+			return await context.Tickets
+				.FirstOrDefaultAsync(e => e.Descripcion == Descripcion);
+		}
 		public async Task<List<Tickets>> Listar(Expression<Func<Tickets, bool>> criterio)
 		{
 			await using var context = await DbContextFactory.CreateDbContextAsync();

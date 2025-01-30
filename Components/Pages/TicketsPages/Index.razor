@@ -1,5 +1,49 @@
-﻿<h3>Index</h3>
+﻿@page "/Tickets/Index"
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+
+<h3>Index</h3>
 
 @code {
+    public List<Tickets> tickets = new List<Tickets>();
+    public List<Clientes> Clientes = new List<Clientes>();
+    public List<Tecnicos> Tecnicos = new List<Tecnicos>();
+    private string filtro = "";
+    private string valorFiltro = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        tickets = await ticketsService.Listar(c => true);
+        Clientes = await clientesService.Listar(c => true);
+        Tecnicos = await tecnicosService.Listar(c => true);
+
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            string filtroLower = filtro.ToLower();
+            string valorFiltroLower = valorFiltro.ToLower();
+
+            tickets = await ticketsService.Listar(t =>
+                (filtroLower == "id" && t.TicketId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Clienteid" && t.ClienteId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Tecnicoid" && t.TecnicoId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Fecha" && t.Fecha.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "Prioridad" && t.Prioridad.ToString().Contains(valorFiltroLower)) ||
+                (filtroLower == "Asunto" && t.Asunto.ToString().Contains(valorFiltroLower)) ||
+                (filtroLower == "Descripcion" && t.Descripcion.ToString().Contains(valorFiltroLower)) ||
+                (filtroLower == "TiempoInvertido" && t.TiempoInvertido.ToString().Contains(valorFiltro)) 
+
+
+            );
+        }
+        else
+        {
+            tickets = await ticketsService.Listar(t => true);
+        }
+    }
 }
