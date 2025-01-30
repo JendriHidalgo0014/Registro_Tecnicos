@@ -21,13 +21,14 @@
         {
             ticketModificado = await ticketsService.Buscar(TicketId);
             Tecnicos = await tecnicosService.Listar(t => true);
+            Clientes = await clientesService.Listar(t => true);
 
         }
 
 
     }
 
-    private string FechaIngresoString
+    private string FechaString
     {
         get => Fecha?.ToString("yyyy-MM-dd") ?? string.Empty;
         set
@@ -57,12 +58,12 @@
         {
             await ticketsService.Guardar(ticketModificado);
 
-            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El cliente se ha modificado"));
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El Ticket se ha modificado"));
             navigation.NavigateTo("/Tickets/Index");
         }
         else
         {
-            Toast.Notify(new(ToastType.Danger, "Error al modificar el cliente", "Ese nombre ya esta registrado."));
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el Ticket", "Ese Ticket ya esta registrado."));
         }
     }
 }
