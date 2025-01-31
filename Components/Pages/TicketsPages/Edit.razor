@@ -4,8 +4,103 @@
 @inject ClientesService clientesService
 @inject TecnicosService tecnicosService
 @inject NavigationManager navigation
+@rendermode InteractiveServer
 
-<h3>Edit</h3>
+<PageTitle>Agregar Ticket</PageTitle>
+<EditForm Model="ticketModificado" OnValidSubmit="ModificarTicket">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Modificar Ticket</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: TicketId -->
+                <div class="form-group">
+                    <label for="ticketId"><strong>ID del Ticket</strong></label>
+                    <InputNumber id="ticketId" class="form-control" @bind-Value="ticketModificado.TicketId" readonly />
+                    <ValidationMessage For="@(() => ticketModificado.TicketId)" />
+                </div>
+
+                <!-- Campo: Fecha -->
+                <div class="form-group">
+                    <label for="fecha"><strong>Fecha del Ticket</strong></label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="ticketModificado.Fecha" />
+                    <ValidationMessage For="@(() => ticketModificado.Fecha)" />
+                </div>
+
+                <!-- Campo: Prioridad -->
+                <div class="form-group">
+                    <label for="prioridad"><strong>Prioridad del Ticket</strong></label>
+                    <InputText Direccion="prioridad" class="form-control" @bind-Value="ticketModificado.Prioridad" />
+                    <ValidationMessage For="@(() => ticketModificado.Prioridad)" />
+                </div>
+
+                @*Asunto*@
+                <div class="form-group">
+                    <label class="form-label"><strong>Asunto</strong></label>
+                    <InputText class="form-control" @bind-Value="ticketModificado.Asunto"></InputText>
+                    <ValidationMessage For="@(()=> ticketModificado.Asunto)"></ValidationMessage>
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="descripcion"><strong>Descripcion del Ticket</strong></label>
+                    <InputText id="descripcion" class="form-control" @bind-Value="ticketModificado.Descripcion" />
+                    <ValidationMessage For="@(() => ticketModificado.Descripcion)" />
+                </div>
+
+                <!-- Campo: TiempoInvertido -->
+                <div class="form-group">
+                    <label for="TiempoInvertido"><strong>Limite de Credito del Cliente</strong></label>
+                    <InputNumber TiempoInvertido="LimiteCredito" class="form-control" @bind-Value="ticketModificado.TiempoInvertido" />
+                    <ValidationMessage For="@(() => ticketModificado.TiempoInvertido)" />
+                </div>
+
+                <!-- Campo: TecnicoId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tecnico</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@ticketModificado.TecnicoId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Tecnicos in Tecnicos)
+                            {
+                                <option value="@Tecnicos.TecnicoId">@Tecnicos.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+                <!-- Campo: ClienteId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Cliente</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@ticketModificado.ClienteId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Clientes in Clientes)
+                            {
+                                <option value="@Clientes.ClienteId">@Clientes.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Confirmar</button>
+                <a href="/Tickets/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
     [Parameter]
@@ -52,7 +147,7 @@
     }
 
 
-    public async Task ModificarCliente()
+    public async Task ModificarTicket()
     {
         if (!await Validar())
         {
