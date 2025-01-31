@@ -7,7 +7,6 @@ namespace Registro_Tecnicos.Models
 	public class Tickets
 	{
 		[Key]
-
 		public int TicketId { get; set; }
 
 		public DateTime Fecha {  get; set; }
@@ -21,7 +20,7 @@ namespace Registro_Tecnicos.Models
 
 		public string Descripcion { get; set; }	
 
-		public TimeSpan TiempoInvertido { get; set; }
+		public int TiempoInvertido { get; set; }
 
 		[ForeignKey("TecnicoId")]
 

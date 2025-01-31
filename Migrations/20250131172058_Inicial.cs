@@ -54,7 +54,7 @@ namespace Registro_Tecnicos.Migrations
                     ClienteId = table.Column<int>(type: "int", nullable: false),
                     Asunto = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TiempoInvertido = table.Column<TimeSpan>(type: "time", nullable: false),
+                    TiempoInvertido = table.Column<int>(type: "int", nullable: false),
                     TecnicoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
