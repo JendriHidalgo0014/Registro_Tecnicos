@@ -1,4 +1,4 @@
-﻿@page "/Tickets/Index"
+﻿@page "/Tickets/Create"
 @inject TicketsService ticketsService
 @inject ClientesService clientesService
 @inject TecnicosService tecnicosService
@@ -37,11 +37,21 @@
                     <ValidationMessage For="@(() => nuevoTicket.Prioridad)" />
                 </div>
 
-                <!-- Campo: Descripcion -->
-                <div class="form-group">
-                    <label for="Descripcion"><strong>Descripcion del Ticket</strong></label>
-                    <InputText id="Descripcion" class="form-control" @bind-Value="nuevoTicket.Descripcion" />
-                    <ValidationMessage For="@(() => nuevoTicket.Descripcion)" />
+                <!-- Campo: ClienteId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Cliente</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@nuevoTicket.ClienteId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Clientes in Clientes)
+                            {
+                                <option value="@Clientes.ClienteId">@Clientes.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
                 </div>
 
                 <!-- Campo: Asunto -->
@@ -49,6 +59,13 @@
                     <label for="Asunto"><strong>Asunto</strong></label>
                     <InputText id="Asunto" class="form-control" @bind-Value="nuevoTicket.Asunto" />
                     <ValidationMessage For="@(() => nuevoTicket.Asunto)" />
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="Descripcion"><strong>Descripcion del Ticket</strong></label>
+                    <InputText id="Descripcion" class="form-control" @bind-Value="nuevoTicket.Descripcion" />
+                    <ValidationMessage For="@(() => nuevoTicket.Descripcion)" />
                 </div>
 
                 <!-- Campo: TiempoInvertido -->
@@ -75,23 +92,6 @@
                     </div>
                 </div>
 
-                <!-- Campo: ClienteId -->
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cliente</strong></label>
-
-                    <div class="input-group">
-
-                        <InputSelect class="form-control form-select" @bind-Value="@nuevoTicket.ClienteId">
-                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
-                            @foreach (var Clientes in Clientes)
-                            {
-                                <option value="@Clientes.ClienteId">@Clientes.Nombres</option>
-                            }
-                        </InputSelect>
-
-                    </div>
-                </div>
-
             </div>
 
             <div class="card-footer text-center">
@@ -112,9 +112,7 @@
     public List<Clientes> Clientes { get; set; } = new List<Clientes>();
     public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
     private DateTime? Fecha { get; set; }
-
-
-
+ 
     protected override async Task OnInitializedAsync()
     {
         Tickets = await ticketsService.Listar(t => t.TicketId > 0);

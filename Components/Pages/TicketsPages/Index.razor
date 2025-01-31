@@ -60,21 +60,21 @@
                     var Cliente = Clientes.FirstOrDefault(t => t.ClienteId == Tickets.ClienteId);
 
                     <tr>
-                        <td>@(Tecnico?.Nombres ?? "No se encontró")</td>
-                        <td>@(Cliente?.Nombres ?? "No se encontró")</td>
-                        <td class="text-center">@Tickets.TicketId</td>
+                         <td class="text-center">@Tickets.TicketId</td>
                         <td class="text-center">@Tickets.Fecha</td>
                         <td class="text-center">@Tickets.Prioridad</td>
+                        <td>@(Cliente?.Nombres ?? "No se encontró")</td>
                         <td class="text-center">@Tickets.Asunto</td>
                         <td class="text-center">@Tickets.Descripcion</td>
                         <td class="text-center">@Tickets.TiempoInvertido</td>
+                        <td>@(Tecnico?.Nombres ?? "No se encontró")</td>
 
 
                         <td class="text-center">
                             <a href="/Tickets/Edit/@Tickets.TicketId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
                         </td>
                         <td class="text-center">
-                            <a href="/Clientes/Delete/@Tickets.TicketId" class="btn btn-danger bi bi-trash2-fill"></a>
+                            <a href="/Tickets/Delete/@Tickets.TicketId" class="btn btn-danger bi bi-trash2-fill"></a>
                         </td>
                     </tr>
                 }

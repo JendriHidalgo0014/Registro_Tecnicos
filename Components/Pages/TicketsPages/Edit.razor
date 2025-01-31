@@ -53,10 +53,11 @@
 
                 <!-- Campo: TiempoInvertido -->
                 <div class="form-group">
-                    <label for="TiempoInvertido"><strong>Limite de Credito del Cliente</strong></label>
-                    <InputNumber TiempoInvertido="LimiteCredito" class="form-control" @bind-Value="ticketModificado.TiempoInvertido" />
+                    <label for="TiempoInvertido"><strong>Tiempo Invertido</strong></label>
+                    <InputNumber id="TiempoInvertido" class="form-control" @bind-Value="ticketModificado.TiempoInvertido" />
                     <ValidationMessage For="@(() => ticketModificado.TiempoInvertido)" />
                 </div>
+
 
                 <!-- Campo: TecnicoId -->
                 <div class="mb-3">
@@ -138,6 +139,7 @@
             }
         }
     }
+
 
     public async Task<bool> Validar()
     {
