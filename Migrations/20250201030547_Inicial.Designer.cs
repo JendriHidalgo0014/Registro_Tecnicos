@@ -12,7 +12,7 @@ using Registro_Tecnicos.DAL;
 namespace Registro_Tecnicos.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250131172058_Inicial")]
+    [Migration("20250201030547_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -107,8 +107,9 @@ namespace Registro_Tecnicos.Migrations
                     b.Property<int>("TecnicoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TiempoInvertido")
-                        .HasColumnType("int");
+                    b.Property<string>("TiempoInvertido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TicketId");
 

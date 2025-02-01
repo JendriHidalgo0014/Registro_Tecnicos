@@ -104,8 +104,9 @@ namespace Registro_Tecnicos.Migrations
                     b.Property<int>("TecnicoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TiempoInvertido")
-                        .HasColumnType("int");
+                    b.Property<string>("TiempoInvertido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TicketId");
 
