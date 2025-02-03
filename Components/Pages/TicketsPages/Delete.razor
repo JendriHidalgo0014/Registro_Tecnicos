@@ -1,0 +1,93 @@
+﻿@page "/Tickets/Delete/{TicketId:int}"
+@inject ToastService Toast
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Confirmar eliminaci&oacute;n</PageTitle>
+
+<EditForm Model="TicketSeleccionado" OnValidSubmit="ConfirmarEliminacion">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <div class="card shadow-lg">
+
+            <!-- Encabezado -->
+            <div class="card-header bg-danger text-white">
+                <h4 class="bi bi-trash"> Eliminar Ticket</h4>
+            </div>
+
+            <div class="card-body">
+                <article class="contenido">
+                    <p class="texto-destacado">¿Deseas proceder con la eliminaci&oacute; de este Ticket?</p>
+                    <div class="detalle">
+                        <span><strong>ID: </strong>@TicketSeleccionado.TicketId</span>
+                    </div>
+                    <div class="detalle">
+                        <span><strong>Fecha: </strong>@TicketSeleccionado.Fecha</span>
+                    </div>
+                    <div class="detalle">
+                        <span><strong>Prioridad: </strong>@TicketSeleccionado.Prioridad</span>
+                    </div>
+                    <div class="detalle">
+                        <span><strong>Asunto: </strong>@TicketSeleccionado.Asunto</span>
+                    </div>
+                    <div class="detalle">
+                        <span><strong>Descripcion: </strong>@TicketSeleccionado.Descripcion</span>
+                    </div>
+                    <div class="detalle">
+                        <span><strong>TiempoInvertido: </strong>@TicketSeleccionado.TiempoInvertido</span>
+                    </div>
+                </article>
+
+                <!-- Pie -->
+                <footer class="pie text-center">
+                    <a href="/Tickets/Index" class="btn btn-info bi bi-arrow-left"> Regresar</a>
+                    <button type="button" class="btn btn-danger  bi bi-trash" @onclick="async () => await ConfirmarEliminacion()">Eliminar</button>
+                </footer>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</EditForm>
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    public Tickets TicketSeleccionado { get; set; } = new Tickets();
+    [Inject] protected ToastService NotificacionServicio { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TicketId > 0)
+        {
+            TicketSeleccionado = await ticketsService.Buscar(TicketId);
+            Tecnicos = await tecnicosService.Listar(t => true);
+            Clientes = await clientesService.Listar(t => true);
+
+        }
+    }
+
+    public async Task ConfirmarEliminacion()
+    {
+        if (TicketSeleccionado != null)
+        {
+            var resultado = await ticketsService.Eliminar(TicketId);
+            if (resultado)
+            {
+                NotificacionServicio.Notify(new(ToastType.Danger, "Eliminado exitosamente.", "El ticket se ha eliminado correctamenete!"));
+                navigation.NavigateTo("/Tickets/Index");
+            }
+            else
+            {
+                NotificacionServicio.Notify(new(ToastType.Warning, "Error al eliminar el ticket", "Ocurrió un error al intentar eliminar el ticket."));
+            }
+        }
+    }
+}

@@ -1,0 +1,166 @@
+﻿@page "/Tickets/Edit/{TicketId:int}"
+@inject ToastService Toast
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Agregar Ticket</PageTitle>
+<EditForm Model="ticketModificado" OnValidSubmit="ModificarTicket">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Modificar Ticket</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: TicketId -->
+                <div class="form-group">
+                    <label for="ticketId"><strong>ID del Ticket</strong></label>
+                    <InputNumber id="ticketId" class="form-control" @bind-Value="ticketModificado.TicketId" readonly />
+                    <ValidationMessage For="@(() => ticketModificado.TicketId)" />
+                </div>
+
+                <!-- Campo: Fecha -->
+                <div class="form-group">
+                    <label for="fecha"><strong>Fecha del Ticket</strong></label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="ticketModificado.Fecha" />
+                    <ValidationMessage For="@(() => ticketModificado.Fecha)" />
+                </div>
+
+                <!-- Campo: Prioridad -->
+                <div class="form-group">
+                    <label for="prioridad"><strong>Prioridad del Ticket</strong></label>
+                    <InputText Direccion="prioridad" class="form-control" @bind-Value="ticketModificado.Prioridad" />
+                    <ValidationMessage For="@(() => ticketModificado.Prioridad)" />
+                </div>
+
+                @*Asunto*@
+                <div class="form-group">
+                    <label class="form-label"><strong>Asunto</strong></label>
+                    <InputText class="form-control" @bind-Value="ticketModificado.Asunto"></InputText>
+                    <ValidationMessage For="@(()=> ticketModificado.Asunto)"></ValidationMessage>
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="descripcion"><strong>Descripcion del Ticket</strong></label>
+                    <InputText id="descripcion" class="form-control" @bind-Value="ticketModificado.Descripcion" />
+                    <ValidationMessage For="@(() => ticketModificado.Descripcion)" />
+                </div>
+
+                <!-- Campo: TiempoInvertido -->
+                <div class="form-group">
+                    <label for="TiempoInvertido"><strong>Tiempo Invertido</strong></label>
+                    <InputText id="TiempoInvertido" class="form-control" @bind-Value="ticketModificado.TiempoInvertido" />
+                    <ValidationMessage For="@(() => ticketModificado.TiempoInvertido)" />
+                </div>
+
+
+                <!-- Campo: TecnicoId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tecnico</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@ticketModificado.TecnicoId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Tecnicos in Tecnicos)
+                            {
+                                <option value="@Tecnicos.TecnicoId">@Tecnicos.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+                <!-- Campo: ClienteId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Cliente</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@ticketModificado.ClienteId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Clientes in Clientes)
+                            {
+                                <option value="@Clientes.ClienteId">@Clientes.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Confirmar</button>
+                <a href="/Tickets/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets ticketModificado { get; set; } = new Tickets();
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    private DateTime? Fecha { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TicketId > 0)
+        {
+            ticketModificado = await ticketsService.Buscar(TicketId);
+            Tecnicos = await tecnicosService.Listar(t => true);
+            Clientes = await clientesService.Listar(t => true);
+
+        }
+
+
+    }
+
+    private string FechaString
+    {
+        get => Fecha?.ToString("yyyy-MM-dd") ?? string.Empty;
+        set
+        {
+            if (DateTime.TryParse(value, out var parsedDate))
+            {
+                Fecha = parsedDate;
+            }
+            else
+            {
+                Fecha = null;
+            }
+        }
+    }
+
+
+    public async Task<bool> Validar()
+    {
+        var existeTicket = await ticketsService.BuscarDescripcion(ticketModificado.Descripcion);
+
+        return existeTicket != null;
+    }
+
+
+    public async Task ModificarTicket()
+    {
+        if (!await Validar())
+        {
+            await ticketsService.Guardar(ticketModificado);
+
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El Ticket se ha modificado"));
+            navigation.NavigateTo("/Tickets/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el Ticket", "Ese Ticket ya esta registrado."));
+        }
+    }
+}

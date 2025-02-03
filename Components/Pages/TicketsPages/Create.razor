@@ -1,0 +1,149 @@
+﻿@page "/Tickets/Create"
+@inject TicketsService ticketsService
+@inject ClientesService clientesService
+@inject TecnicosService tecnicosService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Agregar Ticket</PageTitle>
+<EditForm Model="nuevoTicket" OnValidSubmit="GuardarTicket">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Registrar Nuevo Ticket</h4>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Campo: TicketId -->
+                <div class="form-group">
+                    <label for="TicketId"><strong>ID del Ticket</strong></label>
+                    <InputNumber id="TicketId" class="form-control" @bind-Value="nuevoTicket.TicketId" readonly />
+                    <ValidationMessage For="@(() => nuevoTicket.TicketId)" />
+                </div>
+
+                <!-- Campo: Fecha -->
+                <div class="form-group">
+                    <label for="fecha"><strong>Fecha del Ticket</strong></label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="nuevoTicket.Fecha" />
+                    <ValidationMessage For="@(() => nuevoTicket.Fecha)" />
+                </div>
+
+                <!-- Campo: Prioridad -->
+                <div class="form-group">
+                    <label for="Prioridad"><strong>Prioridad del Ticket</strong></label>
+                    <InputText id="Prioridad" class="form-control" @bind-Value="nuevoTicket.Prioridad" />
+                    <ValidationMessage For="@(() => nuevoTicket.Prioridad)" />
+                </div>
+
+                <!-- Campo: ClienteId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Cliente</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@nuevoTicket.ClienteId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Clientes in Clientes)
+                            {
+                                <option value="@Clientes.ClienteId">@Clientes.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+                <!-- Campo: Asunto -->
+                <div class="form-group">
+                    <label for="Asunto"><strong>Asunto</strong></label>
+                    <InputText id="Asunto" class="form-control" @bind-Value="nuevoTicket.Asunto" />
+                    <ValidationMessage For="@(() => nuevoTicket.Asunto)" />
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="Descripcion"><strong>Descripcion del Ticket</strong></label>
+                    <InputText id="Descripcion" class="form-control" @bind-Value="nuevoTicket.Descripcion" />
+                    <ValidationMessage For="@(() => nuevoTicket.Descripcion)" />
+                </div>
+
+                <!-- Campo: TiempoInvertido -->
+                <div class="form-group">
+                    <label for="TiempoInvertido"><strong>Tiempo Invertido</strong></label>
+                    <InputText id="TiempoInvertido" class="form-control" @bind-Value="nuevoTicket.TiempoInvertido" />
+                    <ValidationMessage For="@(() => nuevoTicket.TiempoInvertido)" />
+                </div>
+
+                <!-- Campo: TecnicoId -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tecnico Encargado</strong></label>
+
+                    <div class="input-group">
+
+                        <InputSelect class="form-control form-select" @bind-Value="@nuevoTicket.TecnicoId">
+                            <option value="0" selected disabled>Elija una opci&oacute;n</option>
+                            @foreach (var Tecnicos in Tecnicos)
+                            {
+                                <option value="@Tecnicos.TecnicoId">@Tecnicos.Nombres</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer text-center">
+                 <a href="/Tickets/Index" class="btn btn-danger ml-2">Volver</a>
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</EditForm>
+
+@code {
+    public Tickets nuevoTicket = new Tickets();
+    [Inject] protected ToastService ToastService { get; set; }
+    public List<Tickets> Tickets { get; set; } = new List<Tickets>();
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    private DateTime? Fecha { get; set; }
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        Tickets = await ticketsService.Listar(t => t.TicketId > 0);
+        Clientes = await clientesService.Listar(c => true);
+        Tecnicos = await tecnicosService.Listar(t => true);
+
+    }
+
+    public async Task<bool> Validar()
+    {
+        var DescripcionIdentica = await ticketsService.BuscarDescripcion(nuevoTicket.Descripcion);
+
+        if (DescripcionIdentica != null)
+        {
+            ToastService.Notify(new(ToastType.Warning, "Esa descripción ya está registrada", " Por favor, utiliza otra descripción."));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task GuardarTicket()
+    {
+        if (await Validar())
+        {
+            ToastService.Notify(new(ToastType.Primary, "Ticket registrado exitosamente.", "Se ha guardado el ticket."));
+            await ticketsService.Guardar(nuevoTicket);
+            await Task.Delay(4000);
+            nuevoTicket = new Tickets();
+            navigation.NavigateTo("/Tickets/Index");
+        }
+    }
+}
