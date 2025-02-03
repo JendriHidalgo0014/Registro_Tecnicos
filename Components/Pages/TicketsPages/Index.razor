@@ -72,8 +72,8 @@
                         var Cliente = Clientes.FirstOrDefault(t => t.ClienteId == Tickets.ClienteId);
 
                         <tr>
-                             <td class="text-center">@Tickets.TicketId</td>
-                            <td class="text-center">@Tickets.Fecha</td>
+                            <td class="text-center">@Tickets.TicketId</td>
+                            <td class="text-center">@Tickets.Fecha.ToString("dd/MM/yyyy")</td>
                             <td class="text-center">@Tickets.Prioridad</td>
                             <td>@(Cliente?.Nombres ?? "No se encontró")</td>
                             <td class="text-center">@Tickets.Asunto</td>
