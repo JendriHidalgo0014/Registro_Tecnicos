@@ -11,7 +11,6 @@ namespace Registro_Tecnicos.DAL
 
 		public DbSet<Clientes> Clientes { get; set; }
 
-		public DbSet<Ciudades> Ciudades { get; set; }
 
 	}
 }
