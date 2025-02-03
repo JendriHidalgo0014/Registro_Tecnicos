@@ -32,10 +32,21 @@
                     <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
                 </div>
             </div>
-            <div class="col-md-3 d-flex align-items-end justify-content-md-end mt-3 mt-md-0">
-                <a href="/Tickets/Create" class="btn btn-warning bi bi-plus-square-fill"> Crear</a>
+
+           
+         <div class="col-md-3 d-flex align-items-center justify-content-end">
+    <a href="/Tickets/Create" class="btn btn-warning btn-sm d-flex align-items-center px-3 py-2">
+        <i class="bi bi-plus-square-fill me-1"></i> Crear
+    </a>
+</div>
+
+
+             <div class="col-1">
+                <button type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise"
+                        @onclick="Restablecer">
+                </button>
             </div>
-        </div>
+
 
         <div class="card-body">
             <table class="table table-light">
@@ -83,8 +94,8 @@
             </table>
         </div>
     </div>
+   </div>
 </div>
-
 @code {
     public List<Tickets> tickets = new List<Tickets>();
     public List<Clientes> Clientes = new List<Clientes>();
@@ -124,5 +135,14 @@
         {
             tickets = await ticketsService.Listar(t => true);
         }
+
+    }
+
+    private async Task Restablecer()
+    {
+        tickets = await ticketsService.Listar(p => true);
+        filtro = "";
+        valorFiltro = "";
+
     }
 }
