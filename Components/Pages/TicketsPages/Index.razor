@@ -7,79 +7,81 @@
 
 <PageTitle>Tickets</PageTitle>
 <div class="container">
-    <div class="card-header bg-warning text-dark">
-        <h3 class="bi bi-person-fill"><strong> Registro de Tickets</strong></h3>
-    </div>
-    <div class="row text-left">
-        <div class="col-md-3">
-            <label for="filtro" class="form-label"><strong>Filtrar por:</strong></label>
-            <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
-                <option value="id">ID</option>
-                <option value="Fecha">Fecha</option>
-                <option value="Prioridad">Prioridad</option>
-                <option value="Asunto">Asunto</option>
-                <option value="Descripcion">Descripcion</option>
-                <option value="TiempoInvertido">TiempoInvertido</option>
-                <option value="TecnicoId">TecnicoId</option>
-                <option value="ClienteId">ClienteId</option>
-            </InputSelect>
+    <div class="card shadow-lg">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="bi bi-person-fill"><strong> Registro de Tickets</strong></h3>
         </div>
-        <div class="col-md-6">
-            <label for="valorFiltro" class="form-label"><strong>B&uacute;squeda:</strong></label>
-            <div class="input-group">
-                <InputText id="valorFiltro" @bind-Value="valorFiltro" class="form-control" placeholder="Buscar" />
-                <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
+        <div class="row text-left">
+            <div class="col-md-3">
+                <label for="filtro" class="form-label"><strong>Filtrar por:</strong></label>
+                <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                    <option value="id">ID</option>
+                    <option value="Fecha">Fecha</option>
+                    <option value="Prioridad">Prioridad</option>
+                    <option value="Asunto">Asunto</option>
+                    <option value="Descripcion">Descripcion</option>
+                    <option value="TiempoInvertido">TiempoInvertido</option>
+                    <option value="TecnicoId">TecnicoId</option>
+                    <option value="ClienteId">ClienteId</option>
+                </InputSelect>
+            </div>
+            <div class="col-md-6">
+                <label for="valorFiltro" class="form-label"><strong>B&uacute;squeda:</strong></label>
+                <div class="input-group">
+                    <InputText id="valorFiltro" @bind-Value="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-end justify-content-md-end mt-3 mt-md-0">
+                <a href="/Tickets/Create" class="btn btn-warning bi bi-plus-square-fill"> Crear</a>
             </div>
         </div>
-        <div class="col-md-3 d-flex align-items-end justify-content-md-end mt-3 mt-md-0">
-            <a href="/Tickets/Create" class="btn btn-warning bi bi-plus-square-fill"> Crear</a>
-        </div>
-    </div>
 
-    <div class="card-body">
-        <table class="table table-light">
-            <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
-                <tr>
-                    <th>ID</th>
-                    <th>Fecha</th>
-                    <th>Prioridad</th>
-                    <th>Cliente</th>
-                    <th>Asunto</th>
-                    <th>Descripcion</th>
-                    <th>TiempoInvertido</th>
-                    <th>TecnicoEncargado</th>
-                    <th>Modificar</th>
-                    <th>Eliminar</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var Tickets in tickets)
-                {
-                    var Tecnico = Tecnicos.FirstOrDefault(t => t.TecnicoId == Tickets.TecnicoId);
-                    var Cliente = Clientes.FirstOrDefault(t => t.ClienteId == Tickets.ClienteId);
-
+        <div class="card-body">
+            <table class="table table-light">
+                <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
                     <tr>
-                         <td class="text-center">@Tickets.TicketId</td>
-                        <td class="text-center">@Tickets.Fecha</td>
-                        <td class="text-center">@Tickets.Prioridad</td>
-                        <td>@(Cliente?.Nombres ?? "No se encontró")</td>
-                        <td class="text-center">@Tickets.Asunto</td>
-                        <td class="text-center">@Tickets.Descripcion</td>
-                        <td class="text-center">@Tickets.TiempoInvertido</td>
-                        <td>@(Tecnico?.Nombres ?? "No se encontró")</td>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Prioridad</th>
+                        <th>Cliente</th>
+                        <th>Asunto</th>
+                        <th>Descripcion</th>
+                        <th>TiempoInvertido</th>
+                        <th>TecnicoEncargado</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
 
-
-                        <td class="text-center">
-                            <a href="/Tickets/Edit/@Tickets.TicketId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
-                        </td>
-                        <td class="text-center">
-                            <a href="/Tickets/Delete/@Tickets.TicketId" class="btn btn-danger bi bi-trash2-fill"></a>
-                        </td>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var Tickets in tickets)
+                    {
+                        var Tecnico = Tecnicos.FirstOrDefault(t => t.TecnicoId == Tickets.TecnicoId);
+                        var Cliente = Clientes.FirstOrDefault(t => t.ClienteId == Tickets.ClienteId);
+
+                        <tr>
+                             <td class="text-center">@Tickets.TicketId</td>
+                            <td class="text-center">@Tickets.Fecha</td>
+                            <td class="text-center">@Tickets.Prioridad</td>
+                            <td>@(Cliente?.Nombres ?? "No se encontró")</td>
+                            <td class="text-center">@Tickets.Asunto</td>
+                            <td class="text-center">@Tickets.Descripcion</td>
+                            <td class="text-center">@Tickets.TiempoInvertido</td>
+                            <td>@(Tecnico?.Nombres ?? "No se encontró")</td>
+
+
+                            <td class="text-center">
+                                <a href="/Tickets/Edit/@Tickets.TicketId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/Tickets/Delete/@Tickets.TicketId" class="btn btn-danger bi bi-trash2-fill"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
