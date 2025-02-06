@@ -12,7 +12,7 @@ using Registro_Tecnicos.DAL;
 namespace Registro_Tecnicos.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250201030547_Inicial")]
+    [Migration("20250206204817_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -56,6 +56,27 @@ namespace Registro_Tecnicos.Migrations
                     b.HasKey("ClienteId");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("Registro_Tecnicos.Models.Sistemas", b =>
+                {
+                    b.Property<int>("SistemaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SistemaId"));
+
+                    b.Property<string>("Complejidad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SistemaId");
+
+                    b.ToTable("Sistemas");
                 });
 
             modelBuilder.Entity("Registro_Tecnicos.Models.Tecnicos", b =>
