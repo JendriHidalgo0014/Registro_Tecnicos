@@ -2,8 +2,46 @@
 @inject ToastService Toast
 @inject SistemasService sistemasService
 @inject NavigationManager navigation
+@rendermode InteractiveServer
 
-<h3>Edit</h3>
+<EditForm Model="sistemaModificado" OnValidSubmit="ModificarSistema">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-primary text-white">
+                <h4>Editar sistema</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: SistemaId -->
+                <div class="form-group">
+                    <label for="sistemaId"><strong>ID del sistema</strong></label>
+                    <InputNumber id="sistemaId" class="form-control" @bind-Value="sistemaModificado.SistemaId" readonly />
+                    <ValidationMessage For="@(() => sistemaModificado.SistemaId)" />
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="descripcion"><strong>Descripcion del sistema</strong></label>
+                    <InputText id="descripcion" class="form-control" @bind-Value="sistemaModificado.Descripcion" />
+                    <ValidationMessage For="@(() => sistemaModificado.Descripcion)" />
+                </div>
+
+                <!-- Campo: Complejidad -->
+                <div class="form-group">
+                    <label for="complejidad"><strong>Complejidad</strong></label>
+                    <InputNumber id="complejidad" class="form-control" @bind-Value="sistemaModificado.Complejidad" />
+                    <ValidationMessage For="@(() => sistemaModificado.Complejidad)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Sistemas/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
     [Parameter]
@@ -34,7 +72,7 @@
 
 
 
-    public async Task ModificarTecnico()
+    public async Task ModificarSistema()
     {
         if (!await Validar())
         {
