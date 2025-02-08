@@ -1,0 +1,51 @@
+﻿@page "/Sistemas/Edit/{SistemaId:int}"
+@inject ToastService Toast
+@inject SistemasService sistemasService
+@inject NavigationManager navigation
+
+<h3>Edit</h3>
+
+@code {
+    [Parameter]
+    public int SistemaId { get; set; }
+    public Sistemas sistemaModificado { get; set; } = new Sistemas();
+    public bool sistemaRepetido { get; set; }
+    public List<Sistemas> List { get; set; } = new List<Sistemas>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SistemaId > 0)
+        {
+            sistemaModificado = await sistemasService.Buscar(SistemaId);
+        }
+
+
+    }
+
+
+    public async Task<bool> Validar()
+    {
+        var existeTecnico = await sistemasService.BuscarDescripcion(sistemaModificado.Descripcion);
+
+        sistemaRepetido = existeTecnico != null;
+        return sistemaRepetido;
+    }
+
+
+
+    public async Task ModificarTecnico()
+    {
+        if (!await Validar())
+        {
+            await sistemasService.Guardar(sistemaModificado);
+
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El sistema se ha modificado"));
+            navigation.NavigateTo("/Sistemas/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el sistema", "Ese sistema ya esta registrado."));
+        }
+    }
+}

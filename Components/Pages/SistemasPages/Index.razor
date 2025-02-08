@@ -1,0 +1,35 @@
+﻿@page "/Sistemas/Index"
+@inject SistemasService sistemasService
+@inject NavigationManager navigation
+
+<h3>Index</h3>
+
+@code {
+    public List<Sistemas> sistemas = new List<Sistemas>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        sistemas = await sistemasService.Listar(t => true);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            string filtroLower = filtro.ToLower();
+            string valorFiltroLower = valorFiltro.ToLower();
+
+            sistemas = await sistemasService.Listar(t =>
+                (filtroLower == "id" && t.SistemaId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "descripcion" && t.Descripcion.ToLower().Contains(valorFiltroLower)) ||
+                (filtroLower == "complejidad" && t.Complejidad.ToString().Contains(valorFiltro))
+            );
+        }
+        else
+        {
+            sistemas = await sistemasService.Listar(t => true);
+        }
+    }
+}
