@@ -11,9 +11,11 @@ namespace Registro_Tecnicos.Models
 
 		public int SistemaId { get; set; }
 
-		public string Descripcion { get; set; }	
+		[Required(ErrorMessage = "Este campo es requerido")]
+		public string Descripcion { get; set; }
 
-		public string Complejidad { get; set; }
+		[Required(ErrorMessage = "Este campo es requerido")]
+		public decimal Complejidad { get; set; }
 
 	}
 }
