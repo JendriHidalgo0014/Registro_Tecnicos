@@ -103,4 +103,12 @@
             sistemas = await sistemasService.Listar(t => true);
         }
     }
+
+    private async Task Restablecer()
+    {
+        sistemas = await sistemasService.Listar(p => true);
+        filtro = "";
+        valorFiltro = "";
+
+    }
 }
