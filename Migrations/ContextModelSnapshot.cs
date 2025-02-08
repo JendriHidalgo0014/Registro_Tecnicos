@@ -63,9 +63,8 @@ namespace Registro_Tecnicos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SistemaId"));
 
-                    b.Property<string>("Complejidad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Complejidad")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
