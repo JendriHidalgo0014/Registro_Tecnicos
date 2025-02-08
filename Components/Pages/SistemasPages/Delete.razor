@@ -3,6 +3,7 @@
 @inject NavigationManager Navegacion
 @rendermode InteractiveServer
 
+<PageTitle>Eliminar Sistema</PageTitle>
 <EditForm Model="SistemaSeleccionado" OnValidSubmit="ConfirmarEliminacion">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -20,10 +21,10 @@
                         <span><strong>ID: </strong>@SistemaSeleccionado.SistemaId</span>
                 </div>
                 <div class="detalle">
-                        <span><strong>Nombre: </strong>@SistemaSeleccionado.Descripcion</span>
+                        <span><strong>Descripcion: </strong>@SistemaSeleccionado.Descripcion</span>
                 </div>
                 <div class="detalle">
-                        <span><strong>Sueldo/Hora: </strong>@SistemaSeleccionado.Complejidad</span>
+                        <span><strong>Complejidad: </strong>@SistemaSeleccionado.Complejidad</span>
                 </div>
             </article>
             <!-- Pie -->
