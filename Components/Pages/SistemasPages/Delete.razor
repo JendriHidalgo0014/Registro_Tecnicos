@@ -1,5 +1,37 @@
-﻿<h3>Delete</h3>
+﻿@page "/Sistemas/Delete/{SistemaId:int}"
+@inject SistemasService sistemasService
+@inject NavigationManager Navegacion
+
+<h3>Delete</h3>
 
 @code {
+    [Parameter]
+    public int SistemaId { get; set; }
+    public Sistemas SistemaSeleccionado { get; set; } = new Sistemas();
+    [Inject] protected ToastService NotificacionServicio { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (SistemaId > 0)
+        {
+            SistemaSeleccionado = await sistemasService.Buscar(SistemaId);
+        }
+    }
+
+    public async Task ConfirmarEliminacion()
+    {
+        if (SistemaSeleccionado != null)
+        {
+            var resultado = await sistemasService.Eliminar(SistemaId);
+            if (resultado)
+            {
+                NotificacionServicio.Notify(new(ToastType.Danger, "Eliminado exitosamente.", "El sistema se ha eliminado correctamenete!"));
+                Navegacion.NavigateTo("/Sistemas/Index");
+            }
+            else
+            {
+                NotificacionServicio.Notify(new(ToastType.Warning, "Error al eliminar el sistema", "Ocurrió un error al intentar eliminar el sistema."));
+            }
+        }
+    }
 }
