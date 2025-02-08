@@ -16,21 +16,21 @@
                 <!-- Campo: SistemaId -->
                 <div class="form-group">
                     <label for="SistemaId"><strong>ID del Sistema</strong></label>
-                    <InputNumber id="SistemaId" class="form-control" @bind-Value="nuevoTecnico.SistemaId" readonly />
+                    <InputNumber id="SistemaId" class="form-control" @bind-Value="nuevoSistema.SistemaId" readonly />
                     <ValidationMessage For="@(() => nuevoSistema.SistemaId)" />
                 </div>
 
                 <!-- Campo: Descripcion -->
                 <div class="form-group">
                     <label for="descripcion"><strong>Descripcion</strong></label>
-                    <InputText id="descripcion" class="form-control" @bind-Value="nuevoTecnico.Descripcion" />
+                    <InputText id="descripcion" class="form-control" @bind-Value="nuevoSistema.Descripcion" />
                     <ValidationMessage For="@(() => nuevoSistema.Descripcion)" />
                 </div>
 
                 <!-- Campo: Complejidad -->
                 <div class="form-group">
                     <label for="Complejidad"><strong>Complejidad</strong></label>
-                    <InputNumber id="Complejidad" class="form-control" @bind-Value="nuevoTecnico.Complejidad" />
+                    <InputNumber id="Complejidad" class="form-control" @bind-Value="nuevoSistema.Complejidad" />
                     <ValidationMessage For="@(() => nuevoSistema.Complejidad)" />
                 </div>
             </div>
