@@ -1,0 +1,80 @@
+﻿@page "/Sistemas/Create"
+@inject SistemasService sistemasService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Agregar sistema</PageTitle>
+<EditForm Model="nuevoSistema" OnValidSubmit="GuardarSistema">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Registrar nuevo sistema</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Campo: SistemaId -->
+                <div class="form-group">
+                    <label for="SistemaId"><strong>ID del Sistema</strong></label>
+                    <InputNumber id="SistemaId" class="form-control" @bind-Value="nuevoSistema.SistemaId" readonly />
+                    <ValidationMessage For="@(() => nuevoSistema.SistemaId)" />
+                </div>
+
+                <!-- Campo: Descripcion -->
+                <div class="form-group">
+                    <label for="descripcion"><strong>Descripcion</strong></label>
+                    <InputText id="descripcion" class="form-control" @bind-Value="nuevoSistema.Descripcion" />
+                    <ValidationMessage For="@(() => nuevoSistema.Descripcion)" />
+                </div>
+
+                <!-- Campo: Complejidad -->
+                <div class="form-group">
+                    <label for="Complejidad"><strong>Complejidad</strong></label>
+                    <InputNumber id="Complejidad" class="form-control" @bind-Value="nuevoSistema.Complejidad" />
+                    <ValidationMessage For="@(() => nuevoSistema.Complejidad)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Sistemas/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Sistemas nuevoSistema = new Sistemas();
+    [Inject] protected ToastService ToastService { get; set; }
+    public List<Sistemas> Sistemas { get; set; } = new List<Sistemas>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Sistemas = await sistemasService.Listar(c => c.SistemaId > 0);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var descripcionDuplicada = await sistemasService.BuscarDescripcion(nuevoSistema.Descripcion);
+        if (descripcionDuplicada != null)
+        {
+            ToastService.Notify(new(ToastType.Warning, "El nombre del técnico ya está registrado", " Por favor, utiliza un nombre diferente."));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task GuardarSistema()
+    {
+        if (await Validar())
+        {
+            ToastService.Notify(new(ToastType.Primary, "Sistema registrado exitosamente.", "Se ha guardado el Sistema."));
+            await sistemasService.Guardar(nuevoSistema);
+            await Task.Delay(4000);
+            nuevoSistema = new Sistemas();
+            navigation.NavigateTo("/Sistemas/Index");
+        }
+    }
+}
