@@ -13,5 +13,8 @@ namespace Registro_Tecnicos.DAL
 
 		public DbSet<Tickets> Tickets { get; set; }
 
+		public DbSet<Prestamos> Prestamos { get; set; }
+
+
 	}
 }
