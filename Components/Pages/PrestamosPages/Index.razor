@@ -1,10 +1,80 @@
 ﻿@page "/Prestamos/Index"
 @inject PrestamosService prestamosService
 @inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Prestamos</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="bi bi-person-fill"><strong> Registro de prestamos</strong></h3>
+        </div>
+        <div class="row text-left">
+            <div class="col-md-3">
+                <label for="filtro" class="form-label"><strong>Filtrar por:</strong></label>
+                <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                    <option value="id">ID</option>
+                    <option value="Monto">Descripcion</option>
+                    <option value="CantidadCoutas">CantidadCoutas</option>
+                </InputSelect>
+            </div>
+            <div class="col-md-6">
+                <label for="valorFiltro" class="form-label"><strong>B&uacute;squeda:</strong></label>
+                <div class="input-group">
+                    <InputText id="valorFiltro" @bind-Value="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-warning bi bi-search" type="button"> Buscar</button>
+                </div>
+            </div>
 
 
-<h3>Index</h3>
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+                <a href="/Prestamos/Create" class="btn btn-warning btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-plus-square-fill me-1"></i> Crear
+                </a>
+            </div>
 
+
+            <div class="col-1">
+                <button type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise"
+                        @onclick="Restablecer">
+                </button>
+            </div>
+
+
+            <div class="card-body">
+                <table class="table table-light">
+                    <thead class="table table-striped text-center table-bordered mt-3 bg-dark text-white">
+                        <tr>
+                            <th>ID</th>
+                            <th>Monto</th>
+                            <th>CantidadCoutas</th>
+                            <th>Modificar</th>
+                            <th>Eliminar</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Prestamos in Prestamos)
+                        {
+                            <tr>
+                                <td class="text-center">@Prestamos.PrestamoId</td>
+                                <td class="text-center">@Prestamos.Monto</td>
+                                <td class="text-center">@Prestamos.CantidadCuotas</td>
+
+                                <td class="text-center">
+                                    <a href="/Prestamos/Edit/@Prestamos.PrestamoId" class="btn btn-secondary text-white bi bi-pencil-fill"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Prestamos/Delete/@Prestamos.PrestamoId" class="btn btn-danger bi bi-trash2-fill"></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 @code {
     public List<Prestamos> Prestamos = new List<Prestamos>();
     private string filtro = "";

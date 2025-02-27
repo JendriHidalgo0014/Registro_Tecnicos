@@ -1,9 +1,47 @@
 ﻿@page "/Prestamos/Create"
 @inject PrestamosService prestamosService
 @inject NavigationManager navigation
+@rendermode InteractiveServer
 
-<h3>Create</h3>
+<PageTitle>Agregar Prestamo</PageTitle>
+<EditForm Model="nuevoPrestamo" OnValidSubmit="GuardarPrestamo">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Registrar nuevo prestamo</h4>
+            </div>
 
+            <div class="card-body">
+                <!-- Campo: PrestamoId -->
+                <div class="form-group">
+                    <label for="PrestamoId"><strong>ID del prestamo</strong></label>
+                    <InputNumber id="PrestamoId" class="form-control" @bind-Value="nuevoPrestamo.PrestamoId" readonly />
+                    <ValidationMessage For="@(() => nuevoPrestamo.PrestamoId)" />
+                </div>
+
+                <!-- Campo: Monto -->
+                <div class="form-group">
+                    <label for="Monto"><strong>Descripcion</strong></label>
+                    <InputNumber id="Monto" class="form-control" @bind-Value="nuevoPrestamo.Monto" />
+                    <ValidationMessage For="@(() => nuevoPrestamo.Monto)" />
+                </div>
+
+                <!-- Campo: CantidadCuotas -->
+                <div class="form-group">
+                    <label for="CantidadCuotas"><strong>Cantidad de cuotas</strong></label>
+                    <InputNumber id="CantidadCuotas" class="form-control" @bind-Value="nuevoPrestamo.CantidadCuotas" />
+                    <ValidationMessage For="@(() => nuevoPrestamo.CantidadCuotas)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Prestamos/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 @code {
     public Prestamos nuevoPrestamo = new Prestamos();
     [Inject] protected ToastService ToastService { get; set; }

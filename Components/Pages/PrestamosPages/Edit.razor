@@ -2,10 +2,47 @@
 @inject ToastService Toast
 @inject PrestamosService prestamosService
 @inject NavigationManager navigation
+@rendermode InteractiveServer
 
+<PageTitle>Editar Prestamo</PageTitle>
+<EditForm Model="prestamoModificado" OnValidSubmit="ModificarPrestamo">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header text-center bg-danger text-white">
+                <h4>Editar prestamo</h4>
+            </div>
 
-<h3>Edit</h3>
+            <div class="card-body">
+                <!-- Campo: PrestamoId -->
+                <div class="form-group">
+                    <label for="PrestamoId"><strong>ID del prestamo</strong></label>
+                    <InputNumber id="PrestamoId" class="form-control" @bind-Value="prestamoModificado.PrestamoId" readonly />
+                    <ValidationMessage For="@(() => prestamoModificado.PrestamoId)" />
+                </div>
 
+                <!-- Campo: Monto -->
+                <div class="form-group">
+                    <label for="Monto"><strong>Monto</strong></label>
+                    <InputNumber id="Monto" class="form-control" @bind-Value="prestamoModificado.Monto" />
+                    <ValidationMessage For="@(() => prestamoModificado.Monto)" />
+                </div>
+
+                <!-- Campo: CantidadCoutas -->
+                <div class="form-group">
+                    <label for="CantidadCoutas"><strong>Cantidad de coutas</strong></label>
+                    <InputNumber id="CantidadCoutas" class="form-control" @bind-Value="prestamoModificado.CantidadCuotas" />
+                    <ValidationMessage For="@(() => prestamoModificado.CantidadCuotas)" />
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <a href="/Prestamos/Index" class="btn btn-danger ml-2">Volver</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
@@ -34,7 +71,7 @@
 
     public async Task ModificarPrestamo()
     {
-        if (!await Validar())
+        if (PrestamoId > 0)
         {
             await prestamosService.Guardar(prestamoModificado);
 
