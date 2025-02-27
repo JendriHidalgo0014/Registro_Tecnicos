@@ -1,0 +1,49 @@
+﻿@page "/Prestamos/Edit/{PrestamoId:int}"
+@inject ToastService Toast
+@inject PrestamosService prestamosService
+@inject NavigationManager navigation
+
+
+<h3>Edit</h3>
+
+@code {
+    [Parameter]
+    public int PrestamoId { get; set; }
+    public Prestamos prestamoModificado { get; set; } = new Prestamos();
+    public bool prestamoRepetido { get; set; }
+    public List<Prestamos> List { get; set; } = new List<Prestamos>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PrestamoId > 0)
+        {
+            prestamoModificado = await prestamosService.Buscar(PrestamoId);
+        }
+
+
+    }
+
+
+    public async Task<bool> Validar()
+    {
+        return prestamoRepetido;
+    }
+
+
+
+    public async Task ModificarPrestamo()
+    {
+        if (!await Validar())
+        {
+            await prestamosService.Guardar(prestamoModificado);
+
+            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El prestamo se ha modificado"));
+            navigation.NavigateTo("/Prestamos/Index");
+        }
+        else
+        {
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el prestamo", "Ese prestamo ya esta registrado."));
+        }
+    }
+}

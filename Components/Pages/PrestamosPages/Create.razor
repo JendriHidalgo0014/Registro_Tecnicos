@@ -1,0 +1,33 @@
+﻿@page "/Prestamos/Create"
+@inject PrestamosService prestamosService
+@inject NavigationManager navigation
+
+<h3>Create</h3>
+
+@code {
+    public Prestamos nuevoPrestamo = new Prestamos();
+    [Inject] protected ToastService ToastService { get; set; }
+    public List<Prestamos> Prestamos { get; set; } = new List<Prestamos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Prestamos = await prestamosService.Listar(c => c.PrestamoId > 0);
+    }
+
+    public async Task<bool> Validar()
+    {
+        return true;
+    }
+
+    public async Task GuardarPrestamo()
+    {
+        if (await Validar())
+        {
+            ToastService.Notify(new(ToastType.Primary, "Prestamo registrado exitosamente.", "Se ha guardado el prestamo."));
+            await prestamosService.Guardar(nuevoPrestamo);
+            await Task.Delay(4000);
+            nuevoPrestamo = new Prestamos();
+            navigation.NavigateTo("/Prestamos/Index");
+        }
+    }
+}

@@ -1,0 +1,39 @@
+﻿@page "/Prestamos/Delete/{PrestamoId:int}"
+  @inject ToastService Toast
+@inject PrestamosService prestamosService
+@inject NavigationManager navigation
+
+
+<h3>Delete</h3>
+
+@code {
+    [Parameter]
+    public int PrestamoId { get; set; }
+    public Prestamos PrestamoSeleccionado { get; set; } = new Prestamos();
+    [Inject] protected ToastService NotificacionServicio { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PrestamoId > 0)
+        {
+            PrestamoSeleccionado = await prestamosService.Buscar(PrestamoId);
+        }
+    }
+
+    public async Task ConfirmarEliminacion()
+    {
+        if (PrestamoSeleccionado != null)
+        {
+            var resultado = await prestamosService.Eliminar(PrestamoId);
+            if (resultado)
+            {
+                NotificacionServicio.Notify(new(ToastType.Danger, "Eliminado exitosamente.", "El sistema se ha eliminado correctamenete!"));
+                navigation.NavigateTo("/Prestamos/Index");
+            }
+            else
+            {
+                NotificacionServicio.Notify(new(ToastType.Warning, "Error al eliminar el sistema", "Ocurrió un error al intentar eliminar el sistema."));
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+﻿@page "/Prestamos/Index"
+@inject PrestamosService prestamosService
+@inject NavigationManager navigation
+
+
+<h3>Index</h3>
+
+@code {
+    public List<Prestamos> Prestamos = new List<Prestamos>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Prestamos = await prestamosService.Listar(t => true);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            string filtroLower = filtro.ToLower();
+            string valorFiltroLower = valorFiltro.ToLower();
+
+            Prestamos = await prestamosService.Listar(t =>
+                (filtroLower == "id" && t.PrestamoId.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "monto" && t.Monto.ToString().Contains(valorFiltro)) ||
+                (filtroLower == "cantidadcoutas" && t.CantidadCuotas.ToString().Contains(valorFiltro))
+            );
+        }
+        else
+        {
+            Prestamos = await prestamosService.Listar(t => true);
+        }
+    }
+
+    private async Task Restablecer()
+    {
+        Prestamos = await prestamosService.Listar(p => true);
+        filtro = "";
+        valorFiltro = "";
+
+    }
+}
