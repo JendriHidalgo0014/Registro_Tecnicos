@@ -15,6 +15,9 @@ namespace Registro_Tecnicos.DAL
 
 		public DbSet<Sistemas> Sistemas { get; set; }
 
+		public DbSet<Prestamos> Prestamos { get; set; }
+
+
 
 	}
 }
