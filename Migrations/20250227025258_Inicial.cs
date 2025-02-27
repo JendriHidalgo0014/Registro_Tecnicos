@@ -30,6 +30,20 @@ namespace Registro_Tecnicos.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Prestamos",
+                columns: table => new
+                {
+                    PrestamoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CantidadCuotas = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prestamos", x => x.PrestamoId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sistemas",
                 columns: table => new
                 {
@@ -82,6 +96,9 @@ namespace Registro_Tecnicos.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Prestamos");
 
             migrationBuilder.DropTable(
                 name: "Sistemas");
