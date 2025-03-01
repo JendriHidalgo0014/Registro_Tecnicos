@@ -14,7 +14,6 @@ namespace Registro_Tecnicos.Models
 		[ForeignKey("PrestamoId")]
 		public int PrestamoId { get; set; }
 		public Prestamos Prestamos { get; set; } = null!;
-
 		public int CuotaNo { get; set; }
 
 		public DateTime Fecha { get; set; }
