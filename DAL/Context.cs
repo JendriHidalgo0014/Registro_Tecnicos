@@ -17,6 +17,9 @@ namespace Registro_Tecnicos.DAL
 
 		public DbSet<Prestamos> Prestamos { get; set; }
 
+		public DbSet<PrestamosDetalle> PrestamosDetalle { get; set; }
+
+
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
