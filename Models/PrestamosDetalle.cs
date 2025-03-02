@@ -11,9 +11,9 @@ namespace Registro_Tecnicos.Models
 
 		public int DetalleId { get; set; }
 
-		[ForeignKey("PrestamoId")]
+		[ForeignKey("Prestamos")]
 		public int PrestamoId { get; set; }
-		public Prestamos Prestamos { get; set; } = null!;
+		public Prestamos? Prestamos { get; set; }
 		public int CuotaNo { get; set; }
 
 		public DateTime Fecha { get; set; }
