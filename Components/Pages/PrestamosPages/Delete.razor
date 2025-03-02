@@ -1,11 +1,11 @@
 ﻿@page "/Prestamos/Delete/{PrestamoId:int}"
-  @inject ToastService Toast
+@inject ToastService Toast
 @inject PrestamosService prestamosService
+@inject PrestamosDetalleService prestamosDetalleService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
 
-
-<PageTitle>Eliminar Prestamo</PageTitle>
+<PageTitle>Eliminar Préstamo</PageTitle>
 <EditForm Model="PrestamoSeleccionado" OnValidSubmit="ConfirmarEliminacion">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -18,7 +18,7 @@
 
             <div class="card-body">
                 <article class="contenido">
-                    <p class="texto-destacado">¿Deseas proceder con la eliminaci&oacute; de este prestamo?</p>
+                    <p class="texto-destacado">¿Deseas proceder con la eliminacion de este prestamo?</p>
                     <div class="detalle">
                         <span><strong>ID: </strong>@PrestamoSeleccionado.PrestamoId</span>
                     </div>
@@ -26,29 +26,71 @@
                         <span><strong>Monto: </strong>@PrestamoSeleccionado.Monto</span>
                     </div>
                     <div class="detalle">
-                        <span><strong>CantidadCuotas: </strong>@PrestamoSeleccionado.CantidadCuotas</span>
+                        <span><strong>Cantidad de Cuotas: </strong>@PrestamoSeleccionado.CantidadCuotas</span>
                     </div>
                 </article>
+
+                <!-- 🔹 Mostrar detalles de las cuotas antes de eliminar -->
+                <div class="card shadow mt-3 border-danger">
+                    <div class="card-header bg-white text-dark">
+                        <h5 class="mb-0">Detalles de las Cuotas</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped text-center table-bordered">
+                            <thead class="bg-dark text-white">
+                                <tr>
+                                    <th># Cuota</th>
+                                    <th>Fecha</th>
+                                    <th>Valor</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (cuotas.Any())
+                                {
+                                    @foreach (var cuota in cuotas)
+                                    {
+                                        <tr>
+                                            <td>@cuota.CuotaNo</td>
+                                            <td>@cuota.Fecha.ToShortDateString()</td>
+                                            <td>@cuota.Valor.ToString("C")</td>
+                                            <td>@cuota.Balance.ToString("C")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="4" class="text-muted">No hay cuotas registradas.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Pie -->
                 <footer class="pie text-center">
                     <a href="/Prestamos/Index" class="btn btn-info bi bi-arrow-left"> Regresar</a>
-                    <button type="button" class="btn btn-danger  bi bi-trash" @onclick="ConfirmarEliminacion">Eliminar</button>
+                    <button type="button" class="btn btn-danger bi bi-trash" @onclick="ConfirmarEliminacion">
+                        Eliminar
+                    </button>
                 </footer>
             </div>
         </div>
     </div>
 </EditForm>
+
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
     public Prestamos PrestamoSeleccionado { get; set; } = new Prestamos();
-    [Inject] protected ToastService NotificacionServicio { get; set; }
+    public List<PrestamosDetalle> cuotas { get; set; } = new List<PrestamosDetalle>();
 
     protected override async Task OnInitializedAsync()
     {
         if (PrestamoId > 0)
         {
             PrestamoSeleccionado = await prestamosService.Buscar(PrestamoId);
+            cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == PrestamoId);
         }
     }
 
@@ -56,15 +98,20 @@
     {
         if (PrestamoSeleccionado != null)
         {
+            // 🔹 Primero eliminamos las cuotas asociadas
+            await prestamosDetalleService.EliminarDetalles(PrestamoId);
+
+            // 🔹 Luego eliminamos el préstamo
             var resultado = await prestamosService.Eliminar(PrestamoId);
+
             if (resultado)
             {
-                NotificacionServicio.Notify(new(ToastType.Danger, "Eliminado exitosamente.", "El prestamo se ha eliminado correctamenete!"));
+                Toast.Notify(new(ToastType.Danger, "Eliminado exitosamente.", "El préstamo y sus cuotas han sido eliminados correctamente!"));
                 navigation.NavigateTo("/Prestamos/Index");
             }
             else
             {
-                NotificacionServicio.Notify(new(ToastType.Warning, "Error al eliminar el prestamo", "Ocurrió un error al intentar eliminar el prestamo."));
+                Toast.Notify(new(ToastType.Warning, "Error al eliminar el préstamo", "Ocurrió un error al intentar eliminar el préstamo."));
             }
         }
     }

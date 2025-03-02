@@ -1,6 +1,7 @@
 ﻿@page "/Prestamos/Edit/{PrestamoId:int}"
 @inject ToastService Toast
 @inject PrestamosService prestamosService
+@inject PrestamosDetalleService prestamosDetalleService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
 
@@ -16,7 +17,7 @@
             <div class="card-body">
                 <!-- Campo: PrestamoId -->
                 <div class="form-group">
-                    <label for="PrestamoId"><strong>ID del prestamo</strong></label>
+                    <label for="PrestamoId"><strong>ID del préstamo</strong></label>
                     <InputNumber id="PrestamoId" class="form-control" @bind-Value="prestamoModificado.PrestamoId" readonly />
                     <ValidationMessage For="@(() => prestamoModificado.PrestamoId)" />
                 </div>
@@ -28,59 +29,105 @@
                     <ValidationMessage For="@(() => prestamoModificado.Monto)" />
                 </div>
 
-                <!-- Campo: CantidadCoutas -->
+                <!-- Campo: CantidadCuotas -->
                 <div class="form-group">
-                    <label for="CantidadCoutas"><strong>Cantidad de coutas</strong></label>
-                    <InputNumber id="CantidadCoutas" class="form-control" @bind-Value="prestamoModificado.CantidadCuotas" />
+                    <label for="CantidadCuotas"><strong>Cantidad de cuotas</strong></label>
+                    <InputNumber id="CantidadCuotas" class="form-control" @bind-Value="prestamoModificado.CantidadCuotas" />
                     <ValidationMessage For="@(() => prestamoModificado.CantidadCuotas)" />
                 </div>
             </div>
 
+            <!-- 🔹 Detalles de las Cuotas -->
+            <div class="card shadow mt-3 border-success">
+                <div class="card-header bg-white text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Detalles de las Cuotas</h5>
+                    <button class="btn btn-primary btn-sm" @onclick="GenerarCuotas">
+                        <i class="bi bi-plus-circle"></i> Generar Cuotas
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped text-center table-bordered">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th># Cuota</th>
+                                <th>Fecha</th>
+                                <th>Valor</th>
+                                <th>Balance</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cuota in cuotas)
+                            {
+                                <tr>
+                                    <td>@cuota.CuotaNo</td>
+                                    <td>@cuota.Fecha.ToShortDateString()</td>
+                                    <td>@cuota.Valor.ToString("C")</td>
+                                    <td>@cuota.Balance.ToString("C")</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarCuota(cuota)">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="card-footer text-center">
-                <button type="submit" class="btn btn-success ml-2">Registrar</button>
+                <button type="submit" class="btn btn-success ml-2">Modificar</button>
                 <a href="/Prestamos/Index" class="btn btn-danger ml-2">Volver</a>
             </div>
         </div>
     </div>
 </EditForm>
+
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
     public Prestamos prestamoModificado { get; set; } = new Prestamos();
-    public bool prestamoRepetido { get; set; }
-    public List<Prestamos> List { get; set; } = new List<Prestamos>();
-
+    public List<PrestamosDetalle> cuotas { get; set; } = new List<PrestamosDetalle>();
 
     protected override async Task OnInitializedAsync()
     {
         if (PrestamoId > 0)
         {
             prestamoModificado = await prestamosService.Buscar(PrestamoId);
+            cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == PrestamoId);
+        }
+    }
+
+    private async Task GenerarCuotas()
+    {
+        if (prestamoModificado.Monto <= 0 || prestamoModificado.CantidadCuotas <= 0)
+        {
+            Toast.Notify(new(ToastType.Warning, "Datos inválidos", "El monto y la cantidad de cuotas deben ser mayores a 0."));
+            return;
         }
 
-
+        await prestamosDetalleService.CalcularCuotas(prestamoModificado.PrestamoId, prestamoModificado.Monto, prestamoModificado.CantidadCuotas);
+        cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == prestamoModificado.PrestamoId);
     }
 
-
-    public async Task<bool> Validar()
+    private async Task EliminarCuota(PrestamosDetalle cuota)
     {
-        return prestamoRepetido;
+        await prestamosDetalleService.EliminarDetalles(cuota.PrestamoId);
+        cuotas.Remove(cuota);
     }
-
-
 
     public async Task ModificarPrestamo()
     {
         if (PrestamoId > 0)
         {
             await prestamosService.Guardar(prestamoModificado);
-
-            Toast.Notify(new(ToastType.Success, "Modificado con exito!", "El prestamo se ha modificado"));
+            Toast.Notify(new(ToastType.Success, "Modificado con éxito!", "El préstamo se ha modificado"));
             navigation.NavigateTo("/Prestamos/Index");
         }
         else
         {
-            Toast.Notify(new(ToastType.Danger, "Error al modificar el prestamo", "Ese prestamo ya esta registrado."));
+            Toast.Notify(new(ToastType.Danger, "Error al modificar el préstamo", "Ese préstamo ya está registrado."));
         }
     }
 }
