@@ -12,7 +12,7 @@ using Registro_Tecnicos.DAL;
 namespace Registro_Tecnicos.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250228033438_Inicial")]
+    [Migration("20250302023144_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -75,6 +75,36 @@ namespace Registro_Tecnicos.Migrations
                     b.HasKey("PrestamoId");
 
                     b.ToTable("Prestamos");
+                });
+
+            modelBuilder.Entity("Registro_Tecnicos.Models.PrestamosDetalle", b =>
+                {
+                    b.Property<int>("DetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetalleId"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CuotaNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PrestamoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("PrestamoId");
+
+                    b.ToTable("PrestamosDetalle");
                 });
 
             modelBuilder.Entity("Registro_Tecnicos.Models.Sistemas", b =>
@@ -153,6 +183,22 @@ namespace Registro_Tecnicos.Migrations
                     b.HasKey("TicketId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("Registro_Tecnicos.Models.PrestamosDetalle", b =>
+                {
+                    b.HasOne("Registro_Tecnicos.Models.Prestamos", "Prestamos")
+                        .WithMany("PrestamosDetalle")
+                        .HasForeignKey("PrestamoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prestamos");
+                });
+
+            modelBuilder.Entity("Registro_Tecnicos.Models.Prestamos", b =>
+                {
+                    b.Navigation("PrestamosDetalle");
                 });
 #pragma warning restore 612, 618
         }
