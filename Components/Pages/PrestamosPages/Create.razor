@@ -6,29 +6,31 @@
 
 <PageTitle>Agregar Préstamo</PageTitle>
 
-<EditForm Model="nuevoPrestamo" OnValidSubmit="GuardarPrestamo">
+<EditForm Model="prestamos" OnValidSubmit="GuardarPrestamo">
     <DataAnnotationsValidator />
 
     <div class="container card shadow-lg">
         <div class="card shadow">
             <div class="card-header text-center bg-danger text-white">
-                <h4>Registrar nuevo prestamo</h4>
+                <h4>Registrar nuevo préstamo</h4>
             </div>
 
             <div class="card-body">
-            <label for="PrestamoId"><strong>ID del prestamo</strong></label>
-            <InputNumber id="PrestamoId" class="form-control" @bind-Value="prestamos.PrestamoId" readonly />
+                <label for="PrestamoId"><strong>ID del préstamo</strong></label>
+                <InputNumber id="PrestamoId" class="form-control" @bind-Value="prestamos.PrestamoId" readonly />
+                <ValidationMessage For="@(() => prestamos.PrestamoId)" />
 
-            <label for="Monto"><strong>Monto</strong></label>
-            <InputNumber id="Monto" class="form-control" @bind-Value="prestamos.Monto" />
+                <label for="Monto"><strong>Monto</strong></label>
+                <InputNumber id="Monto" class="form-control" @bind-Value="prestamos.Monto" />
+                <ValidationMessage For="@(() => prestamos.Monto)" />
 
-            <label for="CantidadCuotas"><strong>Cantidad de cuotas</strong></label>
-            <InputNumber id="CantidadCuotas" class="form-control" @bind-Value="prestamos.CantidadCuotas" />
-
+                <label for="CantidadCuotas"><strong>Cantidad de cuotas</strong></label>
+                <InputNumber id="CantidadCuotas" class="form-control" @bind-Value="prestamos.CantidadCuotas" />
+                <ValidationMessage For="@(() => prestamos.CantidadCuotas)" />
             </div>
         </div>
 
-        <!-- 📌 Tabla de Cuotas con mejor estilo -->
+        <!-- Tabla de Cuotas -->
         <div class="card shadow mt-3 border-success">
             <div class="card-header bg-white text-dark">
                 <h5>Detalles de las Cuotas</h5>
@@ -73,61 +75,67 @@
         </div>
 
     </div>
-
-
 </EditForm>
 
 @code {
-	public int PrestamoId { get; set; }
     public Prestamos prestamos = new Prestamos();
-    public List<Prestamos> nuevoPrestamo = new List<Prestamos>();
     public List<PrestamosDetalle> cuotas = new List<PrestamosDetalle>();
 
     protected override async Task OnInitializedAsync()
     {
-		nuevoPrestamo = await prestamosService.Listar(p => p.PrestamoId > 0);
-        cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == prestamos.PrestamoId);
+        // Inicializa las cuotas para el préstamo actual
+        if (prestamos.PrestamoId > 0)
+        {
+            cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == prestamos.PrestamoId);
+        }
     }
 
     private async Task GenerarCuotas()
     {
         if (prestamos.Monto <= 0 || prestamos.CantidadCuotas <= 0)
         {
-            return; // Validación: No genera cuotas si los valores son incorrectos.
+            return; // No genera cuotas si los valores son incorrectos.
         }
 
-        // 🔹 1️⃣ Primero, guardar el préstamo si aún no tiene ID válido
         if (prestamos.PrestamoId == 0)
         {
-            await prestamosService.Guardar(prestamos);
+            var resultado = await prestamosService.Guardar(prestamos);
+            if (!resultado)
+            {
+                return; // No continúa si no se pudo guardar el préstamo
+            }
         }
 
-        // 🔹 2️⃣ Volver a obtener el ID del préstamo
-        if (prestamos.PrestamoId == 0)
-        {
-            return; // 🚨 Si aún no tiene ID, evitar errores.
-        }
-
-        // 🔹 3️⃣ Generar cuotas en la base de datos
+        // Generar cuotas en la base de datos
         await prestamosDetalleService.CalcularCuotas(prestamos.PrestamoId, prestamos.Monto, prestamos.CantidadCuotas);
 
-        // 🔹 4️⃣ Esperar a que se actualicen y recuperar la lista de cuotas
-        await Task.Delay(500); // Pequeña espera
+        // Recuperar la lista de cuotas actualizada
         cuotas = await prestamosDetalleService.Listar(c => c.PrestamoId == prestamos.PrestamoId);
 
-        // 🔹 5️⃣ Refrescar la UI
         StateHasChanged();
     }
 
     private async Task EliminarCuota(PrestamosDetalle cuota)
     {
-        await prestamosDetalleService.EliminarDetalles(cuota.PrestamoId);
-        cuotas.Remove(cuota);
+        var resultado = await prestamosDetalleService.EliminarDetalles(cuota.PrestamoId);
+        if (resultado)
+        {
+            cuotas.Remove(cuota);
+            StateHasChanged(); // Refresca la UI sin recargar la página
+        }
     }
 
     private async Task GuardarPrestamo()
     {
-        await prestamosService.Guardar(prestamos);
-        navigation.NavigateTo("/Prestamos/Index");
+        if (prestamos.Monto <= 0 || prestamos.CantidadCuotas <= 0)
+        {
+            return; // No permite guardar si los valores son inválidos
+        }
+
+        var resultado = await prestamosService.Guardar(prestamos);
+        if (resultado)
+        {
+            navigation.NavigateTo("/Prestamos/Index");
+        }
     }
 }
