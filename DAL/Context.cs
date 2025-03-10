@@ -1,5 +1,6 @@
 ﻿using Registro_Tecnicos.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Registro_Tecnicos.DAL
 {
@@ -32,6 +33,5 @@ namespace Registro_Tecnicos.DAL
 				new PrestamosDetalle { DetalleId = 4, PrestamoId = 4, CuotaNo = 4, Fecha = DateTime.Now, Valor = 100, Balance = 100 };
 			}
 		}
-
 	}
 }
